@@ -145,3 +145,16 @@ button.tab.on { background: var(--accent); color: #fff; }
 .ln.sz-l { font-size: 1.15rem; }
 .ln .red { color: #c0392b; font-weight: bold; }
 @media (max-width: 640px) { .ln.sz-s { font-size: .55rem; } .ln.sz-l { font-size: .9rem; } }
+
+/* 라이선스 */
+.top .spacer { flex: 1; }
+button.chip { background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: .8rem; }
+button.chip.warn { color: #c0392b; border-color: #c0392b; }
+.modal { position: fixed; inset: 0; background: rgba(0, 0, 0, .55); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
+.modal-box { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; width: min(520px, 100%); }
+.modal-box h2 { margin: 0 0 8px; color: var(--accent); font-size: 1.15rem; }
+.lic-text { margin: 0 0 12px; }
+.lic-label { display: block; font-size: .85rem; color: var(--muted); margin-bottom: 4px; }
+.modal-box textarea { width: 100%; font: .8rem/1.4 ui-monospace, Consolas, monospace; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); resize: vertical; }
+.lic-actions { margin-top: 10px; }
+@media print { .modal, .chip { display: none !important; } }

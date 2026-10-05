@@ -1,3 +1,7 @@
 node_modules
 dist
 *.log
+
+# 정품키 개인키는 절대 커밋하지 않는다
+*.pem
+*.jwk

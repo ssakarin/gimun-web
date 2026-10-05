@@ -8,6 +8,8 @@ import { ResultView } from "./ui/resultView";
 import {
   Person, loadPeople, savePeople, addPerson, makeDate, parseDate, parseCsv, toCsv, personKey,
 } from "./store";
+import { currentState, describeState, verifyKey, storeKey, LicenseState } from "./license/license";
+import { PUBLIC_KEY } from "./license/publicKey";
 import { calcSinsoo, defaultFields, editableFields, SinsooCal, SinsooMode } from "./sinsoo";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -66,6 +68,68 @@ function readInputs(): Inputs {
   return r;
 }
 
+// ---------------------------------------------------------------- 라이선스 (체험판 5개월 / 정품키)
+let lic: LicenseState | null = null;
+const isBlocked = () => lic === null || lic.kind === "expired";
+
+async function refreshLicense(): Promise<void> {
+  lic = await currentState(storage, PUBLIC_KEY);
+  $("licenseStatus").textContent = describeState(lic);
+  $("licenseBtn").classList.toggle("warn", lic.kind === "expired" || (lic.kind === "trial" && lic.daysLeft <= 14));
+  if (lic.kind === "expired") openLicense();
+  else if (!$("licenseModal").hidden && gateOpen) closeLicense();
+}
+
+let gateOpen = false;
+function openLicense(): void {
+  const s = lic;
+  const modal = $("licenseModal");
+  const expired = s?.kind === "expired";
+  gateOpen = expired;
+  $("licTitle").textContent = expired ? "사용기한이 만료되었습니다" : "라이선스";
+  let text = "";
+  if (!s) text = "확인 중입니다…";
+  else if (s.kind === "licensed") text = `정품으로 등록되어 있습니다. (${s.info.name}` + (s.info.expires ? `, ${s.info.expires}까지)` : ", 기한 없음)");
+  else if (s.kind === "trial") text = `체험판을 사용 중입니다. ${s.expiresOn}까지 ${s.daysLeft}일 남았습니다.`;
+  else text = "체험 기간(5개월)이 끝났습니다." + (s.keyProblem === "expired" ? " 등록된 정품키의 사용 기간도 끝났습니다." : "") + " 정품키를 입력하면 계속 사용할 수 있습니다.";
+  $("licText").textContent = text;
+  $("licClose").hidden = expired;                 // 만료되면 닫을 수 없다
+  $("licError").hidden = true;
+  modal.hidden = false;
+  (document.getElementById("app") as HTMLElement).inert = true;
+  input("licenseKey").focus();
+}
+function closeLicense(): void {
+  if (isBlocked()) return;
+  $("licenseModal").hidden = true;
+  gateOpen = false;
+  (document.getElementById("app") as HTMLElement).inert = false;
+}
+
+async function registerKey(): Promise<void> {
+  const err = $("licError");
+  const key = input("licenseKey").value;
+  const r = await verifyKey(key, PUBLIC_KEY);
+  if (!r.ok) {
+    err.textContent = r.reason === "expired" && r.info
+      ? `${r.info.name}님의 정품키는 ${r.info.expires}에 사용 기간이 끝났습니다.`
+      : r.reason === "format" ? "정품키 형식이 올바르지 않습니다. 전체를 그대로 붙여넣었는지 확인하세요." : "올바르지 않은 정품키입니다.";
+    err.hidden = false;
+    return;
+  }
+  if (!storeKey(storage, key)) {
+    err.textContent = "이 브라우저에서는 정품키를 저장할 수 없습니다 (시크릿 모드이거나 저장소가 막혀 있음).";
+    err.hidden = false;
+    return;
+  }
+  input("licenseKey").value = "";
+  await refreshLicense();
+  $("licenseModal").hidden = true;
+  gateOpen = false;
+  (document.getElementById("app") as HTMLElement).inert = false;
+  showMsg(`정품이 등록되었습니다. (${r.info.name})`);
+}
+
 // ---------------------------------------------------------------- 결과 화면
 const basicView = new ResultView({ id: "basic", daeun: true, sinsoo: false, views: true });
 const sinsooView = new ResultView({ id: "sinsoo", daeun: false, sinsoo: true });
@@ -78,6 +142,7 @@ let person: { birthSolar: number; gender: 0 | 1; name: string } | null = null;
 /** 날짜 입력으로 계산해서 화면에 보인다. 성공하면 true */
 function run(): boolean {
   showError("");
+  if (isBlocked()) { openLicense(); return false; }
   try {
     const { y, m, d, h, mi } = readInputs();
     const gender = genderValue();
@@ -146,6 +211,7 @@ function initSinsoo(): void {
 function runSinsoo(): void {
   const err = $("sinError");
   err.hidden = true;
+  if (isBlocked()) { openLicense(); return; }
   if (!person) return;
   try {
     const mode = sinMode(), cal = sinCal();
@@ -199,6 +265,7 @@ function readPillars(): number[][] {
 
 function findFromPillars(): void {
   showError("");
+  if (isBlocked()) { openLicense(); return; }
   const box = $("candidates");
   box.replaceChildren();
   const { found } = findBirthDates(readPillars());
@@ -374,6 +441,14 @@ document.querySelectorAll("#peopleTable th[data-k]").forEach((th) =>
     if (k === sortKey) sortAsc = !sortAsc; else { sortKey = k; sortAsc = true; }
     renderPeople();
   }));
+
+$("licenseBtn").addEventListener("click", openLicense);
+$("licClose").addEventListener("click", closeLicense);
+$("licRegister").addEventListener("click", () => void registerKey());
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !isBlocked()) closeLicense(); });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") void refreshLicense(); });
+window.setInterval(() => void refreshLicense(), 60 * 60 * 1000);
+void refreshLicense();
 
 $("tabBasic").addEventListener("click", () => setTab("basic"));
 $("tabSinsoo").addEventListener("click", () => setTab("sinsoo"));

@@ -6,7 +6,7 @@
 
 ## 현재 상태
 - `src/engine/` : 계산 엔진 이식 완료
-- `src/ui/`, `src/main.ts` : 최소 화면 (입력 → 사주 4주, 10년 대운, 9궁). 사주 직접 입력, 저장 목록(CSV), 통기도(단1/단2), 인쇄/PNG 저장, 신수운(행년궁, 年局·月局·日局·時局), PWA(설치 가능, 오프라인 동작)
+- `src/ui/`, `src/main.ts` : 최소 화면 (입력 → 사주 4주, 10년 대운, 9궁). 사주 직접 입력, 저장 목록(CSV), 통기도(단1/단2), 인쇄/PNG 저장, 신수운(행년궁, 年局·月局·日局·時局), PWA(설치 가능, 오프라인 동작), 라이선스(체험판 5개월 / 정품키)
 - 모든 계산 결과가 원본 C# 엔진과 같은지 `test/golden/` 의 정답지로 자동 검증
 
 ## 실행
@@ -30,6 +30,7 @@ npm run preview    # 빌드 결과 확인 (http://localhost:4173) - 앱 설치/�
 | `src/engine/lunar.ts`, `lunarTable.json` | 음력 변환 (.NET `KoreanLunisolarCalendar` 대체 달력표, 1850~2050년) |
 | `src/ui/tongi*.ts` | 통기도. 라벨 로직(`tongi.gen.ts`)과 라벨 초기값(`tongiLabels.gen.ts`)은 원본 C# 에서 자동 변환 |
 | `src/sinsoo.ts` | 신수운 계산 (원본 신수운 폼의 동작) |
+| `src/license/` | 체험판(5개월)과 정품키 검증. 정품키 발급은 `legacy/tools/keygen/README.md` |
 | `src/store.ts` | 저장된 사람 목록 (원본 data.csv 와 같은 형식) |
 | `src/engine/datetime.ts` | 시간대 영향을 받지 않는 날짜 도구 (시각은 UTC 밀리초 숫자로 취급) |
 | `test/golden/` | C# 엔진이 만든 정답지 JSON |
