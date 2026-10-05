@@ -137,3 +137,11 @@ button.tab + button.tab { border-radius: 0 8px 8px 0; border-left: none; }
 button.tab.on { background: var(--accent); color: #fff; }
 .extra { color: #c0392b; font-weight: bold; margin-top: 2px; }
 .cell.hyear { outline: 2px solid #c0392b; outline-offset: -2px; }
+
+/* 9궁 보기 */
+.views { margin-top: 10px; }
+.ln.center { text-align: center; }
+.ln.sz-s { font-size: .7rem; color: var(--muted); }
+.ln.sz-l { font-size: 1.15rem; }
+.ln .red { color: #c0392b; font-weight: bold; }
+@media (max-width: 640px) { .ln.sz-s { font-size: .55rem; } .ln.sz-l { font-size: .9rem; } }

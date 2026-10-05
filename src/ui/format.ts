@@ -1,6 +1,6 @@
 // 계산 결과를 화면에 보여줄 글자로 바꾸는 부분 (C# showGoongLabelText 등에 해당). DOM 을 쓰지 않아 시험하기 쉽다.
 import {
-  SajuResult, Goong, toOhaeng_1, getohaeng, toFourgan, toCheonMaRok, bokgankyuk, toHongNumLvl, setBatangguk1,
+  SajuResult, Goong, setBatangguk, toOhaeng_1, getohaeng, toFourgan, toCheonMaRok, bokgankyuk, toHongNumLvl, setBatangguk1,
   getPakjehwaeui, to8Mun, to8Mun2, to8Goe, toNum, toYookSam, toGooSung, toSixSin, toTaeulGusung, toMunWang,
   year, month, day, hour, minute,
 } from "../engine/index";
@@ -39,7 +39,7 @@ export interface CellView {
   index: number;           // 0~8 (궁번호 - 1)
   isCenter: boolean;
   hasJi: boolean;          // 년월일시 지지가 있는 궁 (회색 배경)
-  lines: { text: string; align?: "right" }[];
+  lines: { text: string; align?: "right" | "center"; size?: "s" | "l"; redFirst?: boolean }[];
 }
 
 /** 한 궁에 보여줄 8줄 */
@@ -107,4 +107,33 @@ export function cellViewSinsoo(r: SajuResult, i: number, hyear: number, monthMod
     if (c.month_days_1) lines.push({ text: c.month_days_1, align: "right" as const });
   }
   return { ...base, lines };
+}
+
+/** 홍국기문 보기: 홍국수만 간단히 보여주는 칸 (원본 button7) */
+export function cellViewHongguk(r: SajuResult, i: number): CellView {
+  const g = r.goong[i];
+  let l1 = " " + (i + 1) + " (" + toOhaeng_1(getohaeng(i + 1, 3)) + ")";
+  let hasJi = false;
+  if (i !== 4) {
+    (["年支", "月支", "日支", "時支"] as const).forEach((name, k) => {
+      if (g.b_dong[k]) { l1 += " " + name; hasJi = true; }
+    });
+  }
+  if (i === 4) l1 += " " + setBatangguk(r.goong);
+
+  const end0 = g.hongNum[0] === 10 ? g.yoo_age[0] + r.eunboksu1 - 1 : g.yoo_age[0] + g.hongNum[0] - 1;
+  const end1 = g.hongNum[1] === 10 ? g.yoo_age[1] + r.eunboksu2 - 1 : g.yoo_age[1] + g.hongNum[1] - 1;
+  const l3 = toSixSin(g.six_sin[0]) + " " + toNum(g.hongNum[0]) + " " + g.yoo_age[0] + "~" + end0;
+  const l4 = toSixSin(g.six_sin[1]) + " " + toNum(g.hongNum[1]) + " " + age2(g.yoo_age[1]) + "~" + age2(end1);
+  return {
+    index: i, isCenter: i === 4, hasJi,
+    lines: [
+      { text: l1 },
+      { text: toHongNumLvl(g.hongNumlvl[0]), align: "center", size: "s" },
+      { text: l3, align: "center", size: "l" },
+      { text: l4, align: "center", size: "l", redFirst: true },
+      { text: toHongNumLvl(g.hongNumlvl[1]), align: "center", size: "s" },
+      { text: " (" + toMunWang(i) + ")  " + g.eunsung },
+    ],
+  };
 }

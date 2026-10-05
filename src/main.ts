@@ -67,7 +67,7 @@ function readInputs(): Inputs {
 }
 
 // ---------------------------------------------------------------- 결과 화면
-const basicView = new ResultView({ id: "basic", daeun: true, sinsoo: false });
+const basicView = new ResultView({ id: "basic", daeun: true, sinsoo: false, views: true });
 const sinsooView = new ResultView({ id: "sinsoo", daeun: false, sinsoo: true });
 $("basicHost").append(basicView.root);
 $("sinsooView").append(sinsooView.root);

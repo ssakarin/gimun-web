@@ -1,6 +1,7 @@
 // 결과 화면(날짜 표시, 사주 4주, 10년 대운, 통기도, 9궁)을 만드는 부분. 기본 화면과 신수운 화면이 같이 쓴다.
 import { SajuResult, toGan, toZi, getZiYooksin, getGanYooksin, year } from "../engine/index";
-import { cellView, cellViewSinsoo, ganColor, ziColor, GRID_ORDER, CellView } from "./format";
+import { cellView, cellViewSinsoo, cellViewHongguk, ganColor, ziColor, GRID_ORDER, CellView } from "./format";
+import { yunyun } from "./yunyun";
 import { renderTongi } from "./tongiView";
 import { BASIC, SINSOO, Mode } from "./tongiModel";
 
@@ -22,7 +23,10 @@ export interface ResultViewOptions {
   id: string;           // 라디오 이름 충돌을 막기 위한 고유 이름
   daeun: boolean;       // 10년 대운 표시 여부
   sinsoo: boolean;      // 신수운 모양 (칸 글자, 통기도 그림 상자가 다름)
+  views?: boolean;      // 9궁 보기 선택(기문둔갑/유년소운/홍국기문) 표시 여부
 }
+
+export type GridView = "qimen" | "yunyun" | "hongguk";
 
 export interface Sinsoo { hyear: number; monthMode: boolean }
 
@@ -38,6 +42,7 @@ export class ResultView {
   private tongiEl = el("div", "tongi");
   private gridEl = el("div", "grid9");
   private last: { r: SajuResult; s?: Sinsoo } | null = null;
+  private viewMode: GridView = "qimen";
 
   constructor(private opts: ResultViewOptions) {
     this.root = el("div", "resultview");
@@ -65,7 +70,23 @@ export class ResultView {
     }
     head.append(fs);
     tp.append(head, this.tongiEl);
-    this.root.append(tp, this.gridEl);
+    this.root.append(tp);
+    if (opts.views) {
+      const vp = el("div", "row views no-export");
+      const vf = el("fieldset", "seg");
+      vf.append(el("legend", "", "9궁 보기"));
+      for (const [v, label] of [["qimen", "기문둔갑"], ["yunyun", "유년소운"], ["hongguk", "홍국기문"]]) {
+        const lb = document.createElement("label");
+        const rd = document.createElement("input");
+        rd.type = "radio"; rd.name = "view-" + opts.id; rd.value = v; rd.checked = v === "qimen";
+        rd.addEventListener("change", () => { this.viewMode = v as GridView; if (this.last) this.renderGrid(this.last.r, this.last.s); });
+        lb.append(rd, " " + label);
+        vf.append(lb);
+      }
+      vp.append(vf);
+      this.root.append(vp);
+    }
+    this.root.append(this.gridEl);
   }
 
   private tongiMode(): Mode {
@@ -121,15 +142,28 @@ export class ResultView {
 
   private renderGrid(r: SajuResult, s?: Sinsoo): void {
     this.gridEl.replaceChildren();
+    const yy = this.viewMode === "yunyun" ? yunyun(r) : [];
     for (const i of GRID_ORDER) {
-      const v: CellView = this.opts.sinsoo && s ? cellViewSinsoo(r, i, s.hyear, s.monthMode) : cellView(r, i);
+      let v: CellView;
+      if (this.opts.sinsoo && s) v = cellViewSinsoo(r, i, s.hyear, s.monthMode);
+      else if (this.viewMode === "hongguk") v = cellViewHongguk(r, i);
+      else {
+        v = cellView(r, i);
+        if (this.viewMode === "yunyun") v = { ...v, lines: [...v.lines, { text: yy[i], size: "s" as const }] };
+      }
       const cell = el("div", "cell");
       if (v.isCenter) cell.classList.add("center");
       else if (v.hasJi) cell.classList.add("ji");
       if (this.opts.sinsoo && s && i === s.hyear - 1) cell.classList.add("hyear");
       for (const ln of v.lines) {
-        const row = el("div", "ln", ln.text);
+        const row = el("div", "ln");
+        if (ln.redFirst && ln.text.startsWith("世")) {
+          const red = el("span", "red", "世");
+          row.append(red, ln.text.slice(1));
+        } else row.textContent = ln.text;
         if (ln.align === "right") row.classList.add("right");
+        if (ln.align === "center") row.classList.add("center");
+        if (ln.size) row.classList.add("sz-" + ln.size);
         cell.append(row);
       }
       this.gridEl.append(cell);
