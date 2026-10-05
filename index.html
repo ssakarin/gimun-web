@@ -72,6 +72,11 @@
       </details>
 
       <section id="result" hidden>
+        <div class="toolbar no-export">
+          <button type="button" id="print" class="ghost">인쇄</button>
+          <button type="button" id="savePng" class="ghost">이미지로 저장 (PNG)</button>
+        </div>
+        <div id="capture">
         <div class="panel info">
           <div id="dateLabel"></div>
           <div id="realLabel" class="muted"></div>
@@ -88,7 +93,7 @@
         <div class="panel">
           <div class="row between">
             <h2>통기도</h2>
-            <fieldset class="seg">
+            <fieldset class="seg no-export">
               <legend>그림</legend>
               <label><input type="radio" name="tongi" value="1" checked /> 단1</label>
               <label><input type="radio" name="tongi" value="2" /> 단2</label>
@@ -98,6 +103,7 @@
         </div>
 
         <div class="grid9" id="grid9"></div>
+        </div>
       </section>
     </main>
     <script type="module" src="/src/main.ts"></script>

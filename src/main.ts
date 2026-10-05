@@ -1,4 +1,5 @@
 import "./style.css";
+import { toPng } from "html-to-image";
 import {
   calculate, calculateLunar, findBirthDates, mk, year, month, day, hour, minute,
   toGan, toZi, getZiYooksin, getGanYooksin, SajuResult,
@@ -311,6 +312,28 @@ async function importCsv(file: File): Promise<void> {
   showMsg(`${list.length}명 중 ${added}명을 추가했습니다`);
 }
 
+// ---------------------------------------------------------------- 인쇄 / 이미지 저장
+async function savePng(): Promise<void> {
+  const node = $("capture");
+  document.documentElement.dataset.theme = "light";     // 다크 모드여도 이미지는 밝은 색으로
+  try {
+    const url = await toPng(node, {
+      pixelRatio: 2,
+      backgroundColor: "#f4f1ea",
+      filter: (n) => !(n instanceof HTMLElement && n.classList.contains("no-export")),
+    });
+    const a = document.createElement("a");
+    const who = input("name").value.trim() || "기문명리";
+    a.href = url;
+    a.download = `${who}_기문둔갑.png`;
+    a.click();
+  } catch {
+    showError("이미지를 만들 수 없습니다");
+  } finally {
+    delete document.documentElement.dataset.theme;
+  }
+}
+
 // ---------------------------------------------------------------- 시작
 fillNow();
 buildPillarInputs();
@@ -323,6 +346,8 @@ $("form").addEventListener("submit", (e) => {
   else run();
 });
 $("now").addEventListener("click", fillNow);
+$("print").addEventListener("click", () => window.print());
+$("savePng").addEventListener("click", () => void savePng());
 document.querySelectorAll('input[name="tongi"]').forEach((r) => r.addEventListener("change", drawTongi));
 $("save").addEventListener("click", savePerson);
 document.querySelectorAll('input[name="cal"]').forEach((r) => r.addEventListener("change", applyCalMode));

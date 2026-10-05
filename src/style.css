@@ -70,9 +70,6 @@ button.ghost { background: transparent; color: var(--accent); }
   .pc { font-size: 1.5rem; }
   .daeun { gap: 2px; }
 }
-@media print {
-  body { background: #fff; color: #000; }
-  #form, .people, .top .sub, button { display: none !important; }
 }
 
 [hidden] { display: none !important; }
@@ -110,3 +107,24 @@ button.danger { color: #c0392b; border-color: #c0392b; }
 .tongi-img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: contain; background: #fff; border-radius: 6px; }
 .tongi-center { position: absolute; border: 1px solid #000; border-radius: 50%; }
 .tongi-label { position: absolute; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-sizing: border-box; padding: 0 2px; line-height: 1; }
+
+/* 이미지 저장용 강제 밝은 테마 */
+:root[data-theme="light"] {
+  --bg: #f4f1ea; --panel: #ffffff; --ink: #222; --muted: #777; --line: #d8d2c4; --accent: #7a3b2e; --ji: #d3d3d3; --center: #f5deb3;
+}
+.toolbar { display: flex; gap: 8px; justify-content: flex-end; margin: 10px 0 0; }
+
+/* 인쇄: 결과만, 밝은 색으로 한 쪽에 */
+@page { size: A4; margin: 8mm; }
+@media print {
+  :root { --bg: #fff; --panel: #fff; --ink: #000; --muted: #555; --line: #999; --accent: #000; --ji: #d3d3d3; --center: #f5deb3; }
+  body { background: #fff; color: #000; }
+  .no-export, .toolbar, #form, .people, .top .sub, button { display: none !important; }
+  #app { max-width: none; padding: 0; }
+  .panel { break-inside: avoid; margin: 4px 0; padding: 6px 8px; }
+  .cell { break-inside: avoid; min-height: 0; padding: 3px 4px; }
+  .ln { font-size: 6.5pt; line-height: 1.3; min-height: 0; }
+  .grid9 { gap: 2px; margin-top: 4px; }
+  .tongi-stage { transform: scale(.62) !important; }
+  .tongi-wrap { width: 252px !important; height: 227px !important; }
+}
