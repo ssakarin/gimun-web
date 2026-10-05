@@ -5,13 +5,15 @@
 앞으로 PWA(웹, Windows, 안드로이드)로 만들어 갑니다.
 
 ## 현재 상태
-- `src/engine/` : 계산 엔진 이식 완료 (화면은 아직 없음)
+- `src/engine/` : 계산 엔진 이식 완료
+- `src/ui/`, `src/main.ts` : 최소 화면 (입력 → 사주 4주, 10년 대운, 9궁). 통기도/저장/인쇄는 아직 없음
 - 모든 계산 결과가 원본 C# 엔진과 같은지 `test/golden/` 의 정답지로 자동 검증
 
 ## 실행
 
 ```bash
 npm install
+npm run dev        # 개발 서버 (브라우저에서 http://localhost:5173)
 npm test           # 엔진 테스트 (C# 정답지와 비교)
 npm run typecheck  # 타입 검사
 ```

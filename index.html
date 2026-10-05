@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>기문명리</title>
+  </head>
+  <body>
+    <main id="app">
+      <header class="top">
+        <h1>기문명리</h1>
+        <p class="sub">기문둔갑 사주</p>
+      </header>
+
+      <form id="form" class="panel" autocomplete="off">
+        <div class="row">
+          <label>이름 <input id="name" type="text" value="아무개" /></label>
+          <fieldset class="seg">
+            <legend>성별</legend>
+            <label><input type="radio" name="gender" value="1" checked /> 남</label>
+            <label><input type="radio" name="gender" value="0" /> 여</label>
+          </fieldset>
+          <fieldset class="seg">
+            <legend>달력</legend>
+            <label><input type="radio" name="cal" value="solar" checked /> 양력</label>
+            <label><input type="radio" name="cal" value="lunar" /> 음력</label>
+            <label><input type="radio" name="cal" value="leap" /> 윤달 음력</label>
+          </fieldset>
+        </div>
+        <div class="row dt">
+          <label><input id="y" type="number" min="1850" max="2050" /> 년</label>
+          <label><input id="m" type="number" min="1" max="12" /> 월</label>
+          <label><input id="d" type="number" min="1" max="31" /> 일</label>
+          <label><input id="h" type="number" min="0" max="23" /> 시</label>
+          <label><input id="mi" type="number" min="0" max="59" /> 분</label>
+          <button type="button" id="now" class="ghost">지금</button>
+          <button type="submit" id="go">기문둔갑</button>
+        </div>
+        <p id="error" class="error" role="alert" hidden></p>
+      </form>
+
+      <section id="result" hidden>
+        <div class="panel info">
+          <div id="dateLabel"></div>
+          <div id="realLabel" class="muted"></div>
+          <div id="birth" class="birth"></div>
+        </div>
+
+        <div class="panel pillars" id="pillars" aria-label="사주"></div>
+
+        <div class="panel">
+          <h2>10년 대운</h2>
+          <div id="daeun" class="daeun"></div>
+        </div>
+
+        <div class="grid9" id="grid9"></div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
