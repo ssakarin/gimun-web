@@ -133,8 +133,7 @@ async function registerKey(): Promise<void> {
 // ---------------------------------------------------------------- 결과 화면
 // 입력 폼과 저장 목록은 기본 화면의 왼쪽 위에, 신수운 입력은 신수운 화면의 왼쪽 위에 놓는다. (원본 프로그램과 같은 배치)
 const basicView = new ResultView({
-  id: "basic", daeun: true, sinsoo: false, views: true,
-  leftTop: [$("form"), $("peoplePanel")],
+  id: "basic", daeun: true, sinsoo: false,   leftTop: [$("form"), $("peoplePanel")],
 });
 const sinsooView = new ResultView({ id: "sinsoo", daeun: false, sinsoo: true, leftTop: [$("sinsooForm")] });
 $("basicHost").append(basicView.root);
@@ -171,7 +170,7 @@ function run(): boolean {
     });
     person = { birthSolar: r.solarDt, gender: gender as 0 | 1, name };
     showResultBar(true);
-    if (activeTab === "sinsoo") initSinsoo();     // 본인이 바뀌었으면 신수운도 새로
+    if (activeTab === "sinsoo") initSinsoo();     // 본인이 바뀌었으면 변국도 새로
     return true;
   } catch {
     showError("년,월,일,시를 정확히 입력하세요");
@@ -182,15 +181,18 @@ function run(): boolean {
 }
 
 // ---------------------------------------------------------------- 탭 (기문둔갑 / 신수운)
-let activeTab: "basic" | "sinsoo" = "basic";
-function setTab(t: "basic" | "sinsoo"): void {
+type Tab = "qimen" | "sinsoo" | "yunyun" | "hongguk";
+const TAB_IDS: Record<Tab, string> = { qimen: "tabQimen", sinsoo: "tabSinsoo", yunyun: "tabYunyun", hongguk: "tabHongguk" };
+let activeTab: Tab = "qimen";
+function setTab(t: Tab): void {
   activeTab = t;
-  $("tabBasic").classList.toggle("on", t === "basic");
-  $("tabSinsoo").classList.toggle("on", t === "sinsoo");
-  $("basicHost").hidden = t !== "basic";
-  $("sinsooHost").hidden = t !== "sinsoo";
-  document.body.classList.toggle("sinsoo-active", t === "sinsoo");
-  if (t === "sinsoo") initSinsoo();
+  (Object.keys(TAB_IDS) as Tab[]).forEach((k) => $(TAB_IDS[k]).classList.toggle("on", k === t));
+  const isBian = t === "sinsoo";
+  $("basicHost").hidden = isBian;
+  $("sinsooHost").hidden = !isBian;
+  document.body.classList.toggle("sinsoo-active", isBian);
+  if (isBian) initSinsoo();
+  else basicView.setViewMode(t);       // 기문둔갑 / 유년소운 / 홍국기문은 같은 화면의 9궁 보기만 다르다
 }
 
 // ---------------------------------------------------------------- 신수운
@@ -230,7 +232,7 @@ function runSinsoo(): void {
     const s = calcSinsoo({ birthSolar: person.birthSolar, gender: person.gender, calendar: cal, mode, year: y, month: m, day: d, hour: h, minute: mi });
     const r = s.result;
     sinsooView.update(r, {
-      title: `${person.name}  ·  ${y}년 신수운 (${{ year: "年局", month: "月局", day: "日局", time: "時局" }[mode]})`,
+      title: `${person.name}  ·  ${y}년 변국 (${{ year: "年局", month: "月局", day: "日局", time: "時局" }[mode]})`,
       sub: dateLabel(r, cal === "solar", cal === "solar" ? h : hour(person.birthSolar), cal === "solar" ? mi : minute(person.birthSolar))
         + "   ·   보정 시각 " + realTimeLabel(r),
       birth: r.birthJeolgi,
@@ -403,6 +405,7 @@ async function importCsv(file: File): Promise<void> {
 // ---------------------------------------------------------------- 인쇄 / 이미지 저장
 async function savePng(): Promise<void> {
   const view = activeTab === "sinsoo" ? sinsooView : basicView;
+  const tabName = { qimen: "기문둔갑", sinsoo: "변국", yunyun: "유년소운", hongguk: "홍국기문" }[activeTab];
   document.documentElement.dataset.theme = "light";     // 다크 모드여도 이미지는 밝은 색으로
   document.documentElement.classList.add("exporting");  // 입력 폼 등은 감춰서 그 자리가 빈 공간으로 남지 않게
   try {
@@ -414,7 +417,7 @@ async function savePng(): Promise<void> {
     const a = document.createElement("a");
     const who = person?.name ?? "기문명리";
     a.href = url;
-    a.download = `${who}_${activeTab === "sinsoo" ? "신수운" : "기문둔갑"}.png`;
+    a.download = `${who}_${tabName}.png`;
     a.click();
   } catch {
     showError("이미지를 만들 수 없습니다");
@@ -461,8 +464,7 @@ document.addEventListener("visibilitychange", () => { if (document.visibilitySta
 window.setInterval(() => void refreshLicense(), 60 * 60 * 1000);
 void refreshLicense();
 
-$("tabBasic").addEventListener("click", () => setTab("basic"));
-$("tabSinsoo").addEventListener("click", () => setTab("sinsoo"));
+(Object.keys(TAB_IDS) as Tab[]).forEach((k) => $(TAB_IDS[k]).addEventListener("click", () => setTab(k)));
 $("sinsooForm").addEventListener("submit", (e) => { e.preventDefault(); runSinsoo(); });
 document.querySelectorAll('input[name="sinMode"], input[name="sinCal"]').forEach((r) =>
   r.addEventListener("change", () => { resetSinsooFields(); runSinsoo(); }));

@@ -24,7 +24,6 @@ export interface ResultViewOptions {
   id: string;             // 라디오 이름 충돌을 막기 위한 고유 이름
   daeun: boolean;         // 10년 대운 표시 여부
   sinsoo: boolean;        // 신수운 모양 (칸 글자, 통기도 그림 상자가 다름)
-  views?: boolean;        // 9궁 보기 선택(기문둔갑/유년소운/홍국기문) 표시 여부
   leftTop?: HTMLElement[]; // 왼쪽 위에 먼저 놓을 것 (입력 폼 등)
   rightTop?: HTMLElement[]; // 오른쪽 위에 먼저 놓을 것
 }
@@ -112,21 +111,6 @@ export class ResultView {
     this.left.append(this.partsHost);
 
     for (const e of opts.rightTop ?? []) this.right.append(e);
-    if (opts.views) {
-      const vp = el("div", "row views no-export");
-      const vf = el("fieldset", "seg");
-      vf.append(el("legend", "", "9궁 보기"));
-      for (const [v, label] of [["qimen", "기문둔갑"], ["yunyun", "유년소운"], ["hongguk", "홍국기문"]]) {
-        const lb = document.createElement("label");
-        const rd = document.createElement("input");
-        rd.type = "radio"; rd.name = "view-" + opts.id; rd.value = v; rd.checked = v === "qimen";
-        rd.addEventListener("change", () => { this.viewMode = v as GridView; if (this.last) this.renderGrid(this.last.r, this.last.s); });
-        lb.append(rd, " " + label);
-        vf.append(lb);
-      }
-      vp.append(vf);
-      this.right.append(vp);
-    }
     this.buildBoard();
     this.drawEmptyBoard();
     this.right.append(this.boardEl);
@@ -172,6 +156,12 @@ export class ResultView {
     if (this.opts.daeun) this.renderDaeun(r);
     this.renderGrid(r, s);
     this.drawTongi();
+  }
+
+  /** 9궁 보기 방식(기문둔갑 / 유년소운 / 홍국기문)을 바꾼다 */
+  setViewMode(m: GridView): void {
+    this.viewMode = m;
+    if (this.last) this.renderGrid(this.last.r, this.last.s);
   }
 
   /** 계산 결과가 없을 때(입력 오류 등) 결과 부분을 숨긴다 */
