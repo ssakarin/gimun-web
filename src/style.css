@@ -72,5 +72,32 @@ button.ghost { background: transparent; color: var(--accent); }
 }
 @media print {
   body { background: #fff; color: #000; }
-  .panel:has(#form), #form, .top .sub, button { display: none !important; }
+  #form, .people, .top .sub, button { display: none !important; }
 }
+
+[hidden] { display: none !important; }
+.ok { color: #2e7d32; margin: 8px 0 0; }
+.actions { margin-top: 12px; }
+.small { font-size: .78rem; margin: 8px 0 0; }
+
+/* 사주(간지) 입력 */
+.pgrid { display: flex; gap: 10px; justify-content: center; margin-top: 4px; }
+.pcol { display: grid; gap: 4px; text-align: center; }
+.pcol select { font: inherit; font-size: 1.3rem; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
+.cands { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px; }
+.cands p { flex-basis: 100%; margin: 0; }
+button.cand { padding: 6px 12px; }
+
+/* 저장된 사람 */
+details.people summary { cursor: pointer; font-weight: bold; color: var(--accent); }
+.people .tools { margin: 10px 0; }
+.people .tools input[type="text"] { min-width: 12em; }
+.filebtn { display: inline-block; padding: 7px 18px; border-radius: 8px; border: 1px solid var(--accent); color: var(--accent); cursor: pointer; }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th, td { border-bottom: 1px solid var(--line); padding: 5px 6px; text-align: left; white-space: nowrap; }
+th[data-k] { cursor: pointer; user-select: none; color: var(--muted); }
+input.note { width: 100%; min-width: 8em; font: inherit; padding: 3px 5px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--ink); }
+input.note:focus { border-color: var(--line); background: var(--bg); }
+button.sm { padding: 3px 9px; font-size: .8rem; margin-right: 4px; }
+button.danger { color: #c0392b; border-color: #c0392b; }

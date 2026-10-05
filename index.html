@@ -25,19 +25,51 @@
             <label><input type="radio" name="cal" value="solar" checked /> 양력</label>
             <label><input type="radio" name="cal" value="lunar" /> 음력</label>
             <label><input type="radio" name="cal" value="leap" /> 윤달 음력</label>
+            <label><input type="radio" name="cal" value="pillars" /> 사주</label>
           </fieldset>
         </div>
-        <div class="row dt">
+        <div class="row dt" id="dtRow">
           <label><input id="y" type="number" min="1850" max="2050" /> 년</label>
           <label><input id="m" type="number" min="1" max="12" /> 월</label>
           <label><input id="d" type="number" min="1" max="31" /> 일</label>
           <label><input id="h" type="number" min="0" max="23" /> 시</label>
           <label><input id="mi" type="number" min="0" max="59" /> 분</label>
           <button type="button" id="now" class="ghost">지금</button>
+        </div>
+
+        <div id="pillarsInput" hidden>
+          <div class="pgrid" id="pgrid"></div>
+          <p class="muted">사주(년월일시 간지)를 고르면 1924~2044년 사이에서 해당하는 생일시를 찾아줍니다.</p>
+          <div id="candidates" class="cands"></div>
+        </div>
+
+        <div class="row actions">
           <button type="submit" id="go">기문둔갑</button>
+          <button type="button" id="save" class="ghost">저장</button>
         </div>
         <p id="error" class="error" role="alert" hidden></p>
+        <p id="msg" class="ok" role="status" hidden></p>
       </form>
+
+      <details class="panel people" id="peoplePanel">
+        <summary>저장된 사람 <span id="peopleCount" class="muted"></span></summary>
+        <div class="row tools">
+          <input id="filter" type="text" placeholder="이름·비고 검색" />
+          <button type="button" id="export" class="ghost">내보내기 (CSV)</button>
+          <label class="filebtn ghost">가져오기 (CSV)<input id="import" type="file" accept=".csv,.txt" hidden /></label>
+        </div>
+        <div class="tablewrap">
+          <table id="peopleTable">
+            <thead>
+              <tr>
+                <th data-k="name">이름</th><th data-k="gender">성별</th><th data-k="date">생년월일</th><th data-k="cal">양음력</th><th data-k="note">비고</th><th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="muted small">이 기기의 브라우저에만 저장됩니다. 다른 기기로 옮기거나 백업하려면 내보내기를 쓰세요. 기존 프로그램의 data.csv 도 가져올 수 있습니다.</p>
+      </details>
 
       <section id="result" hidden>
         <div class="panel info">
