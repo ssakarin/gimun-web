@@ -131,10 +131,17 @@ async function registerKey(): Promise<void> {
 }
 
 // ---------------------------------------------------------------- 결과 화면
-const basicView = new ResultView({ id: "basic", daeun: true, sinsoo: false, views: true });
-const sinsooView = new ResultView({ id: "sinsoo", daeun: false, sinsoo: true });
+// 입력 폼과 저장 목록은 기본 화면의 왼쪽 위에, 신수운 입력은 신수운 화면의 왼쪽 위에 놓는다. (원본 프로그램과 같은 배치)
+const basicView = new ResultView({
+  id: "basic", daeun: true, sinsoo: false, views: true,
+  leftTop: [$("form"), $("peoplePanel")],
+});
+const sinsooView = new ResultView({ id: "sinsoo", daeun: false, sinsoo: true, leftTop: [$("sinsooForm")] });
 $("basicHost").append(basicView.root);
-$("sinsooView").append(sinsooView.root);
+$("sinsooHost").append(sinsooView.root);
+$("stash").remove();
+
+function showResultBar(on: boolean): void { $("result").hidden = !on; }
 
 /** 신수운에 넘길 본인 정보 (마지막으로 성공한 계산) */
 let person: { birthSolar: number; gender: 0 | 1; name: string } | null = null;
@@ -163,12 +170,13 @@ function run(): boolean {
       birth: r.birthJeolgi,
     });
     person = { birthSolar: r.solarDt, gender: gender as 0 | 1, name };
-    $("result").hidden = false;
+    showResultBar(true);
     if (activeTab === "sinsoo") initSinsoo();     // 본인이 바뀌었으면 신수운도 새로
     return true;
   } catch {
     showError("년,월,일,시를 정확히 입력하세요");
-    $("result").hidden = true;
+    showResultBar(false);
+    basicView.clear();
     return false;
   }
 }
@@ -181,6 +189,7 @@ function setTab(t: "basic" | "sinsoo"): void {
   $("tabSinsoo").classList.toggle("on", t === "sinsoo");
   $("basicHost").hidden = t !== "basic";
   $("sinsooHost").hidden = t !== "sinsoo";
+  document.body.classList.toggle("sinsoo-active", t === "sinsoo");
   if (t === "sinsoo") initSinsoo();
 }
 
@@ -395,6 +404,7 @@ async function importCsv(file: File): Promise<void> {
 async function savePng(): Promise<void> {
   const view = activeTab === "sinsoo" ? sinsooView : basicView;
   document.documentElement.dataset.theme = "light";     // 다크 모드여도 이미지는 밝은 색으로
+  document.documentElement.classList.add("exporting");  // 입력 폼 등은 감춰서 그 자리가 빈 공간으로 남지 않게
   try {
     const url = await toPng(view.root, {
       pixelRatio: 2,
@@ -410,6 +420,7 @@ async function savePng(): Promise<void> {
     showError("이미지를 만들 수 없습니다");
   } finally {
     delete document.documentElement.dataset.theme;
+    document.documentElement.classList.remove("exporting");
   }
 }
 
