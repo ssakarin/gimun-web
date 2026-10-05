@@ -101,3 +101,12 @@ input.note { width: 100%; min-width: 8em; font: inherit; padding: 3px 5px; borde
 input.note:focus { border-color: var(--line); background: var(--bg); }
 button.sm { padding: 3px 9px; font-size: .8rem; margin-right: 4px; }
 button.danger { color: #c0392b; border-color: #c0392b; }
+
+/* 통기도 */
+.row.between { justify-content: space-between; }
+.tongi { display: flex; justify-content: center; overflow: hidden; }
+.tongi-wrap { position: relative; }
+.tongi-stage { position: relative; transform-origin: top left; }
+.tongi-img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: contain; background: #fff; border-radius: 6px; }
+.tongi-center { position: absolute; border: 1px solid #000; border-radius: 50%; }
+.tongi-label { position: absolute; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-sizing: border-box; padding: 0 2px; line-height: 1; }

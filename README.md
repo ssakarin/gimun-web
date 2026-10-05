@@ -6,7 +6,7 @@
 
 ## 현재 상태
 - `src/engine/` : 계산 엔진 이식 완료
-- `src/ui/`, `src/main.ts` : 최소 화면 (입력 → 사주 4주, 10년 대운, 9궁). 통기도/저장/인쇄는 아직 없음
+- `src/ui/`, `src/main.ts` : 최소 화면 (입력 → 사주 4주, 10년 대운, 9궁). 사주 직접 입력, 저장 목록(CSV), 통기도(단1/단2)
 - 모든 계산 결과가 원본 C# 엔진과 같은지 `test/golden/` 의 정답지로 자동 검증
 
 ## 실행
@@ -26,11 +26,14 @@ npm run typecheck  # 타입 검사
 | `src/engine/rules.ts` | 계산 규칙 (C# 에서 자동 변환한 파일) |
 | `src/engine/calendarRules.ts` | 24절기, 사주 4주, 서머타임 보정 |
 | `src/engine/lunar.ts`, `lunarTable.json` | 음력 변환 (.NET `KoreanLunisolarCalendar` 대체 달력표, 1850~2050년) |
+| `src/ui/tongi*.ts` | 통기도. 라벨 로직(`tongi.gen.ts`)과 라벨 초기값(`tongiLabels.gen.ts`)은 원본 C# 에서 자동 변환 |
+| `src/store.ts` | 저장된 사람 목록 (원본 data.csv 와 같은 형식) |
 | `src/engine/datetime.ts` | 시간대 영향을 받지 않는 날짜 도구 (시각은 UTC 밀리초 숫자로 취급) |
 | `test/golden/` | C# 엔진이 만든 정답지 JSON |
 
 ## 계산 규칙을 고칠 때
 `rules.ts` 는 원본 저장소의 `tools/transpile/gen_rules.py` 가 `SajuEngine.Core.cs` 에서 만든 파일입니다.
+통기도(`src/ui/*.gen.ts`)는 `tools/transpile/gen_tongi.py` 가 같은 방식으로 만듭니다.
 규칙을 바꿀 때는 원본(C#)을 고친 뒤 다시 생성하고, 정답지를 새로 뽑아 이 저장소에 복사하세요.
 
 ```

@@ -3,6 +3,7 @@ import {
   calculate, calculateLunar, findBirthDates, mk, year, month, day, hour, minute,
   toGan, toZi, getZiYooksin, getGanYooksin, SajuResult,
 } from "./engine/index";
+import { renderTongi } from "./ui/tongiView";
 import { cellView, dateLabel, realTimeLabel, ganColor, ziColor, GRID_ORDER } from "./ui/format";
 import {
   Person, loadPeople, savePeople, addPerson, makeDate, parseDate, parseCsv, toCsv, personKey,
@@ -112,6 +113,12 @@ function renderGrid(r: SajuResult): void {
   }
 }
 
+let lastResult: SajuResult | null = null;
+const tongiMode = () => (parseInt((document.querySelector('input[name="tongi"]:checked') as HTMLInputElement).value, 10) as 1 | 2);
+function drawTongi(): void {
+  if (lastResult) renderTongi($("tongi"), lastResult.goong, tongiMode());
+}
+
 /** 날짜 입력으로 계산해서 화면에 보인다. 성공하면 true */
 function run(): boolean {
   showError("");
@@ -134,7 +141,9 @@ function run(): boolean {
     renderPillars(r);
     renderDaeun(r);
     renderGrid(r);
+    lastResult = r;
     $("result").hidden = false;
+    drawTongi();
     return true;
   } catch {
     showError("년,월,일,시를 정확히 입력하세요");
@@ -314,6 +323,7 @@ $("form").addEventListener("submit", (e) => {
   else run();
 });
 $("now").addEventListener("click", fillNow);
+document.querySelectorAll('input[name="tongi"]').forEach((r) => r.addEventListener("change", drawTongi));
 $("save").addEventListener("click", savePerson);
 document.querySelectorAll('input[name="cal"]').forEach((r) => r.addEventListener("change", applyCalMode));
 input("filter").addEventListener("input", renderPeople);
