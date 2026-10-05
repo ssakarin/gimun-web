@@ -56,6 +56,8 @@ python legacy/tools/transpile/gen_tongi.py "<saju>/WindowsFormsApp1/기본 Form.
 - 날짜는 입력한 시계 시각 그대로 계산하며 브라우저 시간대/서머타임의 영향을 받지 않습니다.
 
 ## 배포
-`npm run build` 로 만든 `dist/` 폴더를 정적 호스팅(GitHub Pages, Netlify 등)에 올리면 됩니다.
+**https://ssakarin.github.io/gimun-web/** — `master` 에 푸시하면 GitHub Actions 가 타입 검사, 테스트, 빌드를 거쳐 자동으로 올립니다 (`.github/workflows/deploy.yml`).
+
+직접 올릴 때는 `npm run build` 로 만든 `dist/` 폴더를 정적 호스팅(Netlify 등)에 올리면 됩니다.
 HTTPS 주소에서 열면 브라우저(Chrome/Edge)에 "설치" 버튼이 나타나고, Windows 와 안드로이드에서 앱처럼 쓸 수 있습니다.
 설치 후에는 인터넷 없이도 계산됩니다. 저장된 사람은 그 기기의 브라우저에만 저장되므로 내보내기(CSV)로 백업하세요.
