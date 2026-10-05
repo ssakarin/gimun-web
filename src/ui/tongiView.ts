@@ -1,18 +1,18 @@
 // 통기도를 화면(DOM)에 그린다. 계산은 tongiModel.ts 가 한다.
 import { Goong } from "../engine/index";
-import { LABELS } from "./tongiLabels.gen";
-import { computeTongi, zoomFit, IMG1, PICTURE_BOX, Mode } from "./tongiModel";
+import { computeTongi, zoomFit, IMG1, BASIC, Variant, Mode } from "./tongiModel";
 import img1 from "../assets/tongi1.png";
 import img2 from "../assets/tongi2.png";
 
-export function renderTongi(host: HTMLElement, goong: Goong[], mode: Mode): void {
-  const r = computeTongi(goong, mode);
+export function renderTongi(host: HTMLElement, goong: Goong[], mode: Mode, variant: Variant = BASIC): void {
+  const r = computeTongi(goong, mode, variant);
+  const box = variant.box;
   host.replaceChildren();
 
   const stage = document.createElement("div");
   stage.className = "tongi-stage";
-  stage.style.width = PICTURE_BOX.w + "px";
-  stage.style.height = PICTURE_BOX.h + "px";
+  stage.style.width = box.w + "px";
+  stage.style.height = box.h + "px";
 
   const img = document.createElement("img");
   img.src = mode === 1 ? img1 : img2;
@@ -21,7 +21,7 @@ export function renderTongi(host: HTMLElement, goong: Goong[], mode: Mode): void
   stage.append(img);
 
   if (mode === 1 && r.state.centerColor) {   // 단1: 가운데 원을 일간 오행 색으로 채운다
-    const z = zoomFit(IMG1);
+    const z = zoomFit(IMG1, variant);
     const d = 86 * z.s;
     const c = document.createElement("div");
     c.className = "tongi-center";
@@ -29,7 +29,7 @@ export function renderTongi(host: HTMLElement, goong: Goong[], mode: Mode): void
     stage.append(c);
   }
 
-  for (const l of LABELS) {
+  for (const l of variant.labels) {
     const st = r.labels[l.name];
     if (!st.visible) continue;
     const p = r.pos[l.name];
@@ -55,10 +55,10 @@ export function renderTongi(host: HTMLElement, goong: Goong[], mode: Mode): void
   wrap.append(stage);
   host.append(wrap);
   const fit = () => {
-    const k = Math.min(1, host.clientWidth / PICTURE_BOX.w);
+    const k = Math.min(1, host.clientWidth / box.w);
     stage.style.transform = `scale(${k})`;
-    wrap.style.width = PICTURE_BOX.w * k + "px";
-    wrap.style.height = PICTURE_BOX.h * k + "px";
+    wrap.style.width = box.w * k + "px";
+    wrap.style.height = box.h * k + "px";
   };
   fit();
   new ResizeObserver(fit).observe(host);

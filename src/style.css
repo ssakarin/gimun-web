@@ -128,3 +128,23 @@ button.danger { color: #c0392b; border-color: #c0392b; }
   .tongi-stage { transform: scale(.62) !important; }
   .tongi-wrap { width: 252px !important; height: 227px !important; }
 }
+
+/* 탭 / 신수운 */
+.toolbar { align-items: center; }
+.toolbar .spacer { flex: 1; }
+.tabs { display: flex; gap: 0; }
+button.tab { background: transparent; color: var(--accent); border-radius: 8px 0 0 8px; }
+button.tab + button.tab { border-radius: 0 8px 8px 0; border-left: none; }
+button.tab.on { background: var(--accent); color: #fff; }
+.resultview > .panel:first-child .extra { color: #c0392b; font-weight: bold; margin-top: 2px; }
+.cell.hyear { outline: 2px solid #c0392b; outline-offset: -2px; }
+
+/* 탭 / 신수운 */
+.toolbar { align-items: center; }
+.toolbar .spacer { flex: 1; }
+.tabs { display: flex; gap: 0; }
+button.tab { background: transparent; color: var(--accent); border-radius: 8px 0 0 8px; }
+button.tab + button.tab { border-radius: 0 8px 8px 0; border-left: none; }
+button.tab.on { background: var(--accent); color: #fff; }
+.extra { color: #c0392b; font-weight: bold; margin-top: 2px; }
+.cell.hyear { outline: 2px solid #c0392b; outline-offset: -2px; }

@@ -73,36 +73,45 @@
 
       <section id="result" hidden>
         <div class="toolbar no-export">
+          <div class="tabs" role="tablist">
+            <button type="button" id="tabBasic" class="tab on" role="tab">기문둔갑</button>
+            <button type="button" id="tabSinsoo" class="tab" role="tab">신수운</button>
+          </div>
+          <span class="spacer"></span>
           <button type="button" id="print" class="ghost">인쇄</button>
           <button type="button" id="savePng" class="ghost">이미지로 저장 (PNG)</button>
         </div>
-        <div id="capture">
-        <div class="panel info">
-          <div id="dateLabel"></div>
-          <div id="realLabel" class="muted"></div>
-          <div id="birth" class="birth"></div>
-        </div>
 
-        <div class="panel pillars" id="pillars" aria-label="사주"></div>
+        <div id="basicHost"></div>
 
-        <div class="panel">
-          <h2>10년 대운</h2>
-          <div id="daeun" class="daeun"></div>
-        </div>
-
-        <div class="panel">
-          <div class="row between">
-            <h2>통기도</h2>
-            <fieldset class="seg no-export">
-              <legend>그림</legend>
-              <label><input type="radio" name="tongi" value="1" checked /> 단1</label>
-              <label><input type="radio" name="tongi" value="2" /> 단2</label>
-            </fieldset>
-          </div>
-          <div id="tongi" class="tongi"></div>
-        </div>
-
-        <div class="grid9" id="grid9"></div>
+        <div id="sinsooHost" hidden>
+          <form id="sinsooForm" class="panel no-export" autocomplete="off">
+            <div class="row">
+              <fieldset class="seg">
+                <legend>국</legend>
+                <label><input type="radio" name="sinMode" value="year" checked /> 年局</label>
+                <label><input type="radio" name="sinMode" value="month" /> 月局</label>
+                <label><input type="radio" name="sinMode" value="day" /> 日局</label>
+                <label><input type="radio" name="sinMode" value="time" /> 時局</label>
+              </fieldset>
+              <fieldset class="seg">
+                <legend>달력</legend>
+                <label><input type="radio" name="sinCal" value="solar" checked /> 양력</label>
+                <label><input type="radio" name="sinCal" value="lunar" /> 음력</label>
+              </fieldset>
+            </div>
+            <div class="row dt">
+              <label><input id="sy" type="number" /> 년</label>
+              <label><input id="sm" type="number" min="1" max="12" /> 월</label>
+              <label><input id="sd" type="number" min="1" max="31" /> 일</label>
+              <label><input id="sh" type="number" min="0" max="23" /> 시</label>
+              <label><input id="smi" type="number" min="0" max="59" /> 분</label>
+              <button type="submit" id="sgo">신수운 보기</button>
+            </div>
+            <p class="muted small">고칠 수 있는 칸은 국에 따라 달라집니다. 年局은 연도만, 月局은 연·월, 日局은 연·월·일, 時局은 모두 고칠 수 있습니다. 나머지는 본인 생일 값이 쓰입니다.</p>
+            <p id="sinError" class="error" role="alert" hidden></p>
+          </form>
+          <div id="sinsooView"></div>
         </div>
       </section>
     </main>

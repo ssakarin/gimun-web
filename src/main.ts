@@ -1,14 +1,14 @@
 import "./style.css";
 import { toPng } from "html-to-image";
 import {
-  calculate, calculateLunar, findBirthDates, mk, year, month, day, hour, minute,
-  toGan, toZi, getZiYooksin, getGanYooksin, SajuResult,
+  calculate, calculateLunar, findBirthDates, mk, year, month, day, hour, minute, toGan, toZi, SajuResult,
 } from "./engine/index";
-import { renderTongi } from "./ui/tongiView";
-import { cellView, dateLabel, realTimeLabel, ganColor, ziColor, GRID_ORDER } from "./ui/format";
+import { dateLabel, realTimeLabel } from "./ui/format";
+import { ResultView } from "./ui/resultView";
 import {
   Person, loadPeople, savePeople, addPerson, makeDate, parseDate, parseCsv, toCsv, personKey,
 } from "./store";
+import { calcSinsoo, defaultFields, editableFields, SinsooCal, SinsooMode } from "./sinsoo";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const input = (id: string) => $<HTMLInputElement>(id);
@@ -24,6 +24,7 @@ function safeStorage(): Storage | null {
   try { return window.localStorage; } catch { return null; }
 }
 const storage = safeStorage();
+const p2 = (n: number) => (n < 10 ? "0" + n : "" + n);
 
 // ---------------------------------------------------------------- 메시지
 function showError(msg: string): void {
@@ -54,71 +55,25 @@ function setRadio(name: string, value: string): void {
 }
 
 interface Inputs { y: number; m: number; d: number; h: number; mi: number }
+function numOf(id: string): number {
+  const v = input(id).value.trim();
+  if (!/^-?\d+$/.test(v)) throw new Error("bad");
+  return parseInt(v, 10);
+}
 function readInputs(): Inputs {
-  const num = (id: string) => {
-    const v = input(id).value.trim();
-    if (!/^-?\d+$/.test(v)) throw new Error("bad");
-    return parseInt(v, 10);
-  };
-  const r = { y: num("y"), m: num("m"), d: num("d"), h: num("h"), mi: num("mi") };
+  const r = { y: numOf("y"), m: numOf("m"), d: numOf("d"), h: numOf("h"), mi: numOf("mi") };
   if (r.m < 1 || r.m > 12 || r.d < 1 || r.d > 31 || r.h < 0 || r.h > 23 || r.mi < 0 || r.mi > 59) throw new Error("bad");
   return r;
 }
 
-// ---------------------------------------------------------------- 결과 그리기
-function renderPillars(r: SajuResult): void {
-  const box = $("pillars");
-  box.replaceChildren();
-  const names = ["年", "月", "日", "時"];
-  const sj = r.sjGanzi;
-  for (let k = 3; k >= 0; k--) {   // 보통 사주는 시일월년 순서(오른쪽이 년)
-    const col = el("div", "pillar");
-    col.append(el("div", "pname", names[k]));
-    const gan = el("div", "pc", toGan(sj[k][0]));
-    gan.style.background = ganColor(sj[k][0]);
-    const zi = el("div", "pc", toZi(sj[k][1]));
-    zi.style.background = ziColor(sj[k][1]);
-    col.append(gan, zi);
-    col.append(el("div", "pyk", k !== 2 ? getGanYooksin(sj[2][0], sj[k][0]) : "일간"));
-    col.append(el("div", "pyk", getZiYooksin(sj[2][0], sj[k][1])));
-    box.append(col);
-  }
-}
+// ---------------------------------------------------------------- 결과 화면
+const basicView = new ResultView({ id: "basic", daeun: true, sinsoo: false });
+const sinsooView = new ResultView({ id: "sinsoo", daeun: false, sinsoo: true });
+$("basicHost").append(basicView.root);
+$("sinsooView").append(sinsooView.root);
 
-function renderDaeun(r: SajuResult): void {
-  const box = $("daeun");
-  box.replaceChildren();
-  const nowAge = new Date().getFullYear() - year(r.realDt);
-  for (const d of r.daeun) {
-    const c = el("div", "dae");
-    if (d.startAge <= nowAge && nowAge < d.startAge + 10) c.classList.add("now");
-    c.append(el("div", "age", String(d.startAge)), el("div", "gz", d.gan), el("div", "gz", d.zi));
-    box.append(c);
-  }
-}
-
-function renderGrid(r: SajuResult): void {
-  const box = $("grid9");
-  box.replaceChildren();
-  for (const i of GRID_ORDER) {
-    const v = cellView(r, i);
-    const cell = el("div", "cell");
-    if (v.isCenter) cell.classList.add("center");
-    else if (v.hasJi) cell.classList.add("ji");
-    for (const ln of v.lines) {
-      const row = el("div", "ln", ln.text);
-      if (ln.align === "right") row.classList.add("right");
-      cell.append(row);
-    }
-    box.append(cell);
-  }
-}
-
-let lastResult: SajuResult | null = null;
-const tongiMode = () => (parseInt((document.querySelector('input[name="tongi"]:checked') as HTMLInputElement).value, 10) as 1 | 2);
-function drawTongi(): void {
-  if (lastResult) renderTongi($("tongi"), lastResult.goong, tongiMode());
-}
+/** 신수운에 넘길 본인 정보 (마지막으로 성공한 계산) */
+let person: { birthSolar: number; gender: 0 | 1; name: string } | null = null;
 
 /** 날짜 입력으로 계산해서 화면에 보인다. 성공하면 true */
 function run(): boolean {
@@ -136,20 +91,79 @@ function run(): boolean {
     } else {
       r = calculateLunar(y, m, d, h, mi, cal === "leap", gender);
     }
-    $("dateLabel").textContent = `${input("name").value}  ·  ` + dateLabel(r, solarInput, h, mi);
-    $("realLabel").textContent = "보정 시각 " + realTimeLabel(r);
-    $("birth").textContent = r.birthJeolgi;
-    renderPillars(r);
-    renderDaeun(r);
-    renderGrid(r);
-    lastResult = r;
+    const name = input("name").value.trim() || "이름없음";
+    basicView.update(r, {
+      title: `${name}  ·  ` + dateLabel(r, solarInput, h, mi),
+      sub: "보정 시각 " + realTimeLabel(r),
+      birth: r.birthJeolgi,
+    });
+    person = { birthSolar: r.solarDt, gender: gender as 0 | 1, name };
     $("result").hidden = false;
-    drawTongi();
+    if (activeTab === "sinsoo") initSinsoo();     // 본인이 바뀌었으면 신수운도 새로
     return true;
   } catch {
     showError("년,월,일,시를 정확히 입력하세요");
     $("result").hidden = true;
     return false;
+  }
+}
+
+// ---------------------------------------------------------------- 탭 (기문둔갑 / 신수운)
+let activeTab: "basic" | "sinsoo" = "basic";
+function setTab(t: "basic" | "sinsoo"): void {
+  activeTab = t;
+  $("tabBasic").classList.toggle("on", t === "basic");
+  $("tabSinsoo").classList.toggle("on", t === "sinsoo");
+  $("basicHost").hidden = t !== "basic";
+  $("sinsooHost").hidden = t !== "sinsoo";
+  if (t === "sinsoo") initSinsoo();
+}
+
+// ---------------------------------------------------------------- 신수운
+const sinMode = () => (document.querySelector('input[name="sinMode"]:checked') as HTMLInputElement).value as SinsooMode;
+const sinCal = () => (document.querySelector('input[name="sinCal"]:checked') as HTMLInputElement).value as SinsooCal;
+
+/** 입력칸을 본인 생일 값으로 되돌리고, 국에 따라 고칠 수 있는 칸만 연다 */
+function resetSinsooFields(): void {
+  if (!person) return;
+  const f = defaultFields(person.birthSolar, sinCal());
+  input("sy").value = String(f.year); input("sm").value = String(f.month); input("sd").value = String(f.day);
+  input("sh").value = String(f.hour); input("smi").value = String(f.minute);
+  const ed = editableFields(sinMode());
+  input("sy").readOnly = false;
+  input("sm").readOnly = !ed.month;
+  input("sd").readOnly = !ed.day;
+  input("sh").readOnly = !ed.time;
+  input("smi").readOnly = !ed.time;
+}
+
+function initSinsoo(): void {
+  if (!person) return;
+  resetSinsooFields();
+  runSinsoo();
+}
+
+function runSinsoo(): void {
+  const err = $("sinError");
+  err.hidden = true;
+  if (!person) return;
+  try {
+    const mode = sinMode(), cal = sinCal();
+    const y = numOf("sy"), m = numOf("sm"), d = numOf("sd"), h = numOf("sh"), mi = numOf("smi");
+    if (m < 1 || m > 12 || d < 1 || d > 31 || h < 0 || h > 23 || mi < 0 || mi > 59) throw new Error("bad");
+    if (cal === "solar" && new Date(Date.UTC(y, m - 1, d)).getUTCMonth() !== m - 1) throw new Error("bad");
+    const s = calcSinsoo({ birthSolar: person.birthSolar, gender: person.gender, calendar: cal, mode, year: y, month: m, day: d, hour: h, minute: mi });
+    const r = s.result;
+    sinsooView.update(r, {
+      title: `${person.name}  ·  ${y}년 신수운 (${{ year: "年局", month: "月局", day: "日局", time: "時局" }[mode]})`,
+      sub: dateLabel(r, cal === "solar", cal === "solar" ? h : hour(person.birthSolar), cal === "solar" ? mi : minute(person.birthSolar))
+        + "   ·   보정 시각 " + realTimeLabel(r),
+      birth: r.birthJeolgi,
+      extra: `행년 ${s.hyear}궁 (${s.age}세)`,
+    }, { hyear: s.hyear, monthMode: s.monthMode });
+  } catch {
+    err.textContent = "년,월,일,시를 정확히 입력하세요";
+    err.hidden = false;
   }
 }
 
@@ -182,8 +196,6 @@ function buildPillarInputs(): void {
 function readPillars(): number[][] {
   return [0, 1, 2, 3].map((k) => [parseInt(pillarSel[k * 2].value, 10), parseInt(pillarSel[k * 2 + 1].value, 10)]);
 }
-
-const p2 = (n: number) => (n < 10 ? "0" + n : "" + n);
 
 function findFromPillars(): void {
   showError("");
@@ -314,18 +326,18 @@ async function importCsv(file: File): Promise<void> {
 
 // ---------------------------------------------------------------- 인쇄 / 이미지 저장
 async function savePng(): Promise<void> {
-  const node = $("capture");
+  const view = activeTab === "sinsoo" ? sinsooView : basicView;
   document.documentElement.dataset.theme = "light";     // 다크 모드여도 이미지는 밝은 색으로
   try {
-    const url = await toPng(node, {
+    const url = await toPng(view.root, {
       pixelRatio: 2,
       backgroundColor: "#f4f1ea",
       filter: (n) => !(n instanceof HTMLElement && n.classList.contains("no-export")),
     });
     const a = document.createElement("a");
-    const who = input("name").value.trim() || "기문명리";
+    const who = person?.name ?? "기문명리";
     a.href = url;
-    a.download = `${who}_기문둔갑.png`;
+    a.download = `${who}_${activeTab === "sinsoo" ? "신수운" : "기문둔갑"}.png`;
     a.click();
   } catch {
     showError("이미지를 만들 수 없습니다");
@@ -348,7 +360,6 @@ $("form").addEventListener("submit", (e) => {
 $("now").addEventListener("click", fillNow);
 $("print").addEventListener("click", () => window.print());
 $("savePng").addEventListener("click", () => void savePng());
-document.querySelectorAll('input[name="tongi"]').forEach((r) => r.addEventListener("change", drawTongi));
 $("save").addEventListener("click", savePerson);
 document.querySelectorAll('input[name="cal"]').forEach((r) => r.addEventListener("change", applyCalMode));
 input("filter").addEventListener("input", renderPeople);
@@ -363,3 +374,9 @@ document.querySelectorAll("#peopleTable th[data-k]").forEach((th) =>
     if (k === sortKey) sortAsc = !sortAsc; else { sortKey = k; sortAsc = true; }
     renderPeople();
   }));
+
+$("tabBasic").addEventListener("click", () => setTab("basic"));
+$("tabSinsoo").addEventListener("click", () => setTab("sinsoo"));
+$("sinsooForm").addEventListener("submit", (e) => { e.preventDefault(); runSinsoo(); });
+document.querySelectorAll('input[name="sinMode"], input[name="sinCal"]').forEach((r) =>
+  r.addEventListener("change", () => { resetSinsooFields(); runSinsoo(); }));

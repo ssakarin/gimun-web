@@ -91,3 +91,20 @@ export function realTimeLabel(r: SajuResult): string {
   const t = r.realDt;
   return `${year(t)}-${p2(month(t))}-${p2(day(t))} ${p2(hour(t))}:${p2(minute(t))}`;
 }
+
+/** 신수운 폼의 한 칸: 유년 나이 범위 대신 行年宮 표시와 월국 날짜가 들어간다 */
+export function cellViewSinsoo(r: SajuResult, i: number, hyear: number, monthMode: boolean): CellView {
+  const g = r.goong;
+  const base = cellView(r, i);
+  const c = g[i];
+  const l3 = toHongNumLvl(c.hongNumlvl[0]) + (i === hyear - 1 ? "     行年宮" : "");
+  const l4 = (i === 4 ? setBatangguk1(g) : "") + parkJeHwaUi(c, i) + " " + to8Mun(c.eightmun) + " " + toNum(c.hongNum[0]) + " "
+    + toYookSam(c.yooksam[0]) + " " + toGooSung(c.goosung) + " " + toSixSin(c.six_sin[0]);
+  const l5 = to8Goe(c.eightgoe) + " " + toNum(c.hongNum[1]) + " " + toYookSam(c.yooksam[1]) + " " + c.eightjang + " " + toSixSin(c.six_sin[1]);
+  const lines = [base.lines[0], base.lines[1], { text: l3 }, { text: l4 }, { text: l5 }, base.lines[5], base.lines[6], base.lines[7]];
+  if (monthMode) {
+    lines.push({ text: c.month_days });
+    if (c.month_days_1) lines.push({ text: c.month_days_1, align: "right" as const });
+  }
+  return { ...base, lines };
+}
