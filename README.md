@@ -34,15 +34,20 @@ npm run preview    # 빌드 결과 확인 (http://localhost:4173) - 앱 설치/�
 | `src/engine/datetime.ts` | 시간대 영향을 받지 않는 날짜 도구 (시각은 UTC 밀리초 숫자로 취급) |
 | `test/golden/` | C# 엔진이 만든 정답지 JSON |
 
-## 계산 규칙을 고칠 때
-`rules.ts` 는 원본 저장소의 `tools/transpile/gen_rules.py` 가 `SajuEngine.Core.cs` 에서 만든 파일입니다.
-통기도(`src/ui/*.gen.ts`)는 `tools/transpile/gen_tongi.py` 가 같은 방식으로 만듭니다.
-규칙을 바꿀 때는 원본(C#)을 고친 뒤 다시 생성하고, 정답지를 새로 뽑아 이 저장소에 복사하세요.
+## 계산 규칙을 고칠 때 / 원본과 비교할 때
+`legacy/` 폴더에 원본 C# 엔진과 검증·변환 도구를 같이 넣어 두었습니다. (원본 프로그램 전체는 [ssakarin/saju](https://github.com/ssakarin/saju) 에 예전 그대로 있습니다.)
+
+| 경로 | 설명 |
+|---|---|
+| `legacy/WindowsFormsApp1/SajuEngine*.cs` | 원본 계산 엔진(C#). `src/engine/rules.ts` 는 이 파일에서 자동 변환한 것 |
+| `legacy/tools/transpile/` | C# → TypeScript 변환기 (`gen_rules.py`: 계산 규칙, `gen_tongi.py`: 통기도 라벨) |
+| `legacy/tools/EngineDump/` | 정답지(`test/golden/*.json`) 생성기 |
+| `legacy/tools/EngineCompare`, `GoldenDump` | 원본 exe 와 비교하는 도구 (자세한 것은 `legacy/tools/README.md`) |
 
 ```
-# 원본 저장소(saju)에서
-python tools/transpile/gen_rules.py WindowsFormsApp1/SajuEngine.Core.cs <이 저장소>/src/engine/rules.ts tools/transpile/rules_spec.py
-tools/EngineDump 를 빌드해서 cases / palja / monthdays / lunar / lunardays 를 다시 생성 -> test/golden/ 로 복사
+python legacy/tools/transpile/gen_rules.py legacy/WindowsFormsApp1/SajuEngine.Core.cs src/engine/rules.ts legacy/tools/transpile/rules_spec.py
+# 통기도: 원본 폼 파일(saju 저장소의 기본 Form.cs 등)이 필요
+python legacy/tools/transpile/gen_tongi.py "<saju>/WindowsFormsApp1/기본 Form.cs" "<saju>/WindowsFormsApp1/기본 Form.Designer.cs" src/ui
 ```
 
 ## 이식할 때 주의한 점
