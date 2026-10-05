@@ -70,7 +70,6 @@ button.ghost { background: transparent; color: var(--accent); }
   .pc { font-size: 1.5rem; }
   .daeun { gap: 2px; }
 }
-}
 
 [hidden] { display: none !important; }
 .ok { color: #2e7d32; margin: 8px 0 0; }
