@@ -206,11 +206,11 @@ function resetSinsooFields(): void {
   input("sy").value = String(f.year); input("sm").value = String(f.month); input("sd").value = String(f.day);
   input("sh").value = String(f.hour); input("smi").value = String(f.minute);
   const ed = editableFields(sinMode());
-  input("sy").readOnly = false;
-  input("sm").readOnly = !ed.month;
-  input("sd").readOnly = !ed.day;
-  input("sh").readOnly = !ed.time;
-  input("smi").readOnly = !ed.time;
+  input("sy").disabled = false;           // 연도는 어느 국에서나 바꿀 수 있다
+  input("sm").disabled = !ed.month;       // 나머지는 국에 따라 켜지고, 꺼진 칸은 본인 생일 값이 쓰인다
+  input("sd").disabled = !ed.day;
+  input("sh").disabled = !ed.time;
+  input("smi").disabled = !ed.time;
 }
 
 function initSinsoo(): void {
@@ -438,7 +438,6 @@ $("form").addEventListener("submit", (e) => {
   if (calValue() === "pillars") findFromPillars();
   else run();
 });
-$("now").addEventListener("click", fillNow);
 $("print").addEventListener("click", () => window.print());
 $("savePng").addEventListener("click", () => void savePng());
 $("save").addEventListener("click", savePerson);

@@ -245,3 +245,16 @@ button.chip.warn { color: #c0392b; border-color: #c0392b; }
 
 .board .cell.blank { min-height: 210px; }
 @media (max-width: 640px) { .top .sub { display: none; } .top h1 { white-space: nowrap; } }
+
+/* 입력 영역: 이름+성별 한 줄, 날짜 한 줄 */
+.name-row { flex-wrap: nowrap; align-items: flex-end; gap: 10px; }
+.name-row > label { flex: 1 1 auto; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.name-row input#name { width: 100%; min-width: 5em; }
+.name-row .seg { flex: 0 0 auto; white-space: nowrap; }
+.dt { flex-wrap: nowrap; gap: 4px 3px; }
+.dt label { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+.dt input[type="number"] { width: 2.75em; padding: 6px 3px; text-align: right; -moz-appearance: textfield; appearance: textfield; }
+.dt input[type="number"]::-webkit-outer-spin-button, .dt input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.dt label:first-child input { width: 3.8em; }
+.dt input:disabled { background: transparent; color: var(--muted); border-style: dashed; opacity: .75; cursor: not-allowed; }
+@media (max-width: 520px) { .dt { flex-wrap: wrap; } .name-row { flex-wrap: wrap; } }

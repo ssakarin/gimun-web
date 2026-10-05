@@ -21,13 +21,15 @@
       <!-- 아래 입력 칸들은 main.ts 가 결과 화면의 왼쪽 위로 옮겨 놓는다 -->
       <div id="stash" hidden>
       <form id="form" class="panel no-export" autocomplete="off">
-        <div class="row">
+        <div class="row name-row">
           <label>이름 <input id="name" type="text" value="아무개" /></label>
           <fieldset class="seg">
             <legend>성별</legend>
             <label><input type="radio" name="gender" value="1" checked /> 남</label>
             <label><input type="radio" name="gender" value="0" /> 여</label>
           </fieldset>
+        </div>
+        <div class="row">
           <fieldset class="seg">
             <legend>달력</legend>
             <label><input type="radio" name="cal" value="solar" checked /> 양력</label>
@@ -42,7 +44,6 @@
           <label><input id="d" type="number" min="1" max="31" /> 일</label>
           <label><input id="h" type="number" min="0" max="23" /> 시</label>
           <label><input id="mi" type="number" min="0" max="59" /> 분</label>
-          <button type="button" id="now" class="ghost">지금</button>
         </div>
 
         <div id="pillarsInput" hidden>
@@ -90,8 +91,8 @@
               </fieldset>
               <fieldset class="seg">
                 <legend>달력</legend>
-                <label><input type="radio" name="sinCal" value="solar" checked /> 양력</label>
-                <label><input type="radio" name="sinCal" value="lunar" /> 음력</label>
+                <label><input type="radio" name="sinCal" value="lunar" checked /> 음력</label>
+                <label><input type="radio" name="sinCal" value="solar" /> 양력</label>
               </fieldset>
             </div>
             <div class="row dt">
@@ -100,9 +101,11 @@
               <label><input id="sd" type="number" min="1" max="31" /> 일</label>
               <label><input id="sh" type="number" min="0" max="23" /> 시</label>
               <label><input id="smi" type="number" min="0" max="59" /> 분</label>
+            </div>
+            <div class="row actions">
               <button type="submit" id="sgo">변국 보기</button>
             </div>
-            <p class="muted small">고칠 수 있는 칸은 국에 따라 달라집니다. 年局은 연도만, 月局은 연·월, 日局은 연·월·일, 時局은 모두 고칠 수 있습니다. 나머지는 본인 생일 값이 쓰입니다.</p>
+            <p class="muted small">본인 생일이 음력으로 들어가 있습니다. 위의 年局·月局·日局·時局을 누르면 그 국에서 바꿀 수 있는 칸만 켜지고(年局은 연도, 月局은 연·월, 日局은 연·월·일, 時局은 전부), 나머지 칸은 꺼진 채 본인 생일 값이 쓰입니다.</p>
             <p id="sinError" class="error" role="alert" hidden></p>
           </form>
 
