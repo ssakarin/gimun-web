@@ -6,7 +6,7 @@
 
 ## 현재 상태
 - `src/engine/` : 계산 엔진 이식 완료
-- `src/ui/`, `src/main.ts` : 최소 화면 (입력 → 사주 4주, 10년 대운, 9궁). 사주 직접 입력, 저장 목록(CSV), 통기도(단1/단2), 인쇄/PNG 저장, 신수운(행년궁, 年局·月局·日局·時局)
+- `src/ui/`, `src/main.ts` : 최소 화면 (입력 → 사주 4주, 10년 대운, 9궁). 사주 직접 입력, 저장 목록(CSV), 통기도(단1/단2), 인쇄/PNG 저장, 신수운(행년궁, 年局·月局·日局·時局), PWA(설치 가능, 오프라인 동작)
 - 모든 계산 결과가 원본 C# 엔진과 같은지 `test/golden/` 의 정답지로 자동 검증
 
 ## 실행
@@ -16,6 +16,8 @@ npm install
 npm run dev        # 개발 서버 (브라우저에서 http://localhost:5173)
 npm test           # 엔진 테스트 (C# 정답지와 비교)
 npm run typecheck  # 타입 검사
+npm run build      # 배포용 빌드 (dist/). 상대 경로라 어느 주소에 올려도 동작
+npm run preview    # 빌드 결과 확인 (http://localhost:4173) - 앱 설치/오프라인 동작은 이쪽에서 확인
 ```
 
 ## 구조
@@ -47,3 +49,8 @@ tools/EngineDump 를 빌드해서 cases / palja / monthdays / lunar / lunardays 
 - C# `Math.Round` 는 .5 에서 짝수로 반올림합니다 (JS `Math.round` 와 다름).
 - 원본의 한자에는 호환 문자(예: 立 `U+F9F7`)가 섞여 있어 직접 타이핑하지 않고 원본에서 추출합니다.
 - 날짜는 입력한 시계 시각 그대로 계산하며 브라우저 시간대/서머타임의 영향을 받지 않습니다.
+
+## 배포
+`npm run build` 로 만든 `dist/` 폴더를 정적 호스팅(GitHub Pages, Netlify 등)에 올리면 됩니다.
+HTTPS 주소에서 열면 브라우저(Chrome/Edge)에 "설치" 버튼이 나타나고, Windows 와 안드로이드에서 앱처럼 쓸 수 있습니다.
+설치 후에는 인터넷 없이도 계산됩니다. 저장된 사람은 그 기기의 브라우저에만 저장되므로 내보내기(CSV)로 백업하세요.
