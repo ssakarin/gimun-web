@@ -14,7 +14,10 @@
       <header class="top">
         <h1>기문명리</h1>
         <span class="spacer"></span>
-        <button type="button" id="licenseBtn" class="chip" title="라이선스"><span id="licenseStatus">확인 중…</span></button>
+        <div id="headActions" class="head-actions" hidden>
+          <button type="button" id="print" class="ghost">인쇄</button>
+          <button type="button" id="savePng" class="ghost" title="이미지(PNG)로 저장" aria-label="이미지로 저장">이미지</button>
+        </div>
       </header>
 
       <!-- 아래 입력 칸들은 main.ts 가 결과 화면의 왼쪽 위로 옮겨 놓는다 -->
@@ -120,13 +123,13 @@
           <button type="button" id="tabHongguk" class="tab" role="tab" aria-selected="false">홍국기문</button>
           <button type="button" id="tabSinsoo" class="tab" role="tab" aria-selected="false">변국</button>
         </div>
-        <span class="spacer"></span>
-        <button type="button" id="print" class="ghost">인쇄</button>
-        <button type="button" id="savePng" class="ghost" title="이미지(PNG)로 저장" aria-label="이미지로 저장">이미지</button>
       </div>
 
       <div id="basicHost"></div>
       <div id="sinsooHost" hidden></div>
+      <footer class="foot">
+        <button type="button" id="licenseBtn" class="linkbtn"><span id="licenseStatus">라이선스</span></button>
+      </footer>
     </main>
     <div id="licenseModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="licTitle" hidden>
       <div class="modal-box">

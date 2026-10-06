@@ -74,7 +74,6 @@ const isBlocked = () => lic === null || lic.kind === "expired";
 
 async function refreshLicense(): Promise<void> {
   lic = await currentState(storage, PUBLIC_KEY);
-  $("licenseStatus").textContent = describeState(lic);
   $("licenseBtn").classList.toggle("warn", lic.kind === "expired" || (lic.kind === "trial" && lic.daysLeft <= 14));
   if (lic.kind === "expired") openLicense();
   else if (!$("licenseModal").hidden && gateOpen) closeLicense();
@@ -140,7 +139,7 @@ $("basicHost").append(basicView.root);
 $("sinsooHost").append(sinsooView.root);
 $("stash").remove();
 
-function showResultBar(on: boolean): void { $("result").hidden = !on; }
+function showResultBar(on: boolean): void { $("result").hidden = !on; $("headActions").hidden = !on; }
 
 /** 신수운에 넘길 본인 정보 (마지막으로 성공한 계산) */
 let person: { birthSolar: number; gender: 0 | 1; name: string } | null = null;

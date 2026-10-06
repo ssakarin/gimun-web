@@ -384,3 +384,14 @@ button.p-main { display: flex; flex-direction: column; align-items: flex-start; 
 .person input.note:hover { border-color: var(--line); }
 .person input.note:focus { border-color: var(--accent); background: var(--panel); color: var(--ink); }
 .people-empty { text-align: center; margin: 14px 0; }
+
+/* 헤더 오른쪽: 인쇄 / 이미지 (예전 라이선스 표시 자리) */
+.head-actions { display: flex; gap: 8px; }
+.head-actions button.ghost { border-radius: 10px; padding: 7px 16px; }
+/* 맨 아래 작은 라이선스 링크 */
+.foot { margin: 28px 0 8px; text-align: center; }
+button.linkbtn { background: none; border: none; padding: 4px 8px; color: var(--muted); font-size: .8rem; text-decoration: underline; cursor: pointer; border-radius: 6px; }
+button.linkbtn:hover { color: var(--accent); }
+button.linkbtn.warn { color: #c0392b; }
+@media print { .foot { display: none !important; } }
+#result.toolbar { justify-content: flex-start; }
