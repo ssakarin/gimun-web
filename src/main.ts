@@ -4,6 +4,7 @@ import {
   calculate, calculateLunar, findBirthDates, mk, year, month, day, hour, minute, toGan, toZi, SajuResult,
 } from "./engine/index";
 import { dateLabel } from "./ui/format";
+import { checkGate, GateState } from "./gate";
 import { ResultView } from "./ui/resultView";
 import {
   Person, loadPeople, savePeople, addPerson, makeDate, parseDate, parseCsv, toCsv, personKey,
@@ -415,3 +416,32 @@ document.querySelectorAll('input[name="psort"]').forEach((r) =>
 $("sinsooForm").addEventListener("submit", (e) => { e.preventDefault(); runSinsoo(); });
 document.querySelectorAll('input[name="sinMode"], input[name="sinCal"]').forEach((r) =>
   r.addEventListener("change", () => { resetSinsooFields(); runSinsoo(); }));
+
+// ---------------------------------------------------------------- 사용 허가 확인
+function showLock(st: Extract<GateState, { ok: false }>): void {
+  document.body.classList.add("locked");
+  if (document.getElementById("lockscreen")) return;
+  const msg = st.reason === "stopped"
+    ? "이 서비스는 현재 사용이 중단되었습니다."
+    : st.reason === "expired"
+      ? "오프라인으로 사용할 수 있는 기간(7일)이 지났습니다. 인터넷에 연결한 뒤 다시 열어 주세요."
+      : "처음 사용하려면 인터넷 연결이 필요합니다.";
+  const box = document.createElement("div");
+  box.id = "lockscreen";
+  box.className = "lockscreen";
+  box.innerHTML = `<div><h2>기문명리</h2><p></p><button type="button">다시 확인</button></div>`;
+  box.querySelector("p")!.textContent = msg;
+  box.querySelector("button")!.addEventListener("click", () => void refreshGate());
+  document.body.appendChild(box);
+}
+function unlock(): void {
+  document.body.classList.remove("locked");
+  document.getElementById("lockscreen")?.remove();
+}
+async function refreshGate(): Promise<void> {
+  const st = await checkGate();
+  if (st.ok) unlock(); else showLock(st);
+}
+void refreshGate();
+document.addEventListener("visibilitychange", () => { if (!document.hidden) void refreshGate(); });
+window.setInterval(() => void refreshGate(), 30 * 60 * 1000);
