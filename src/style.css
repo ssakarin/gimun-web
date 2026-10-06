@@ -403,3 +403,11 @@ button.p-main { display: flex; flex-direction: column; align-items: flex-start; 
   .dt label:first-child input { width: 3.2em; }
 }
 @media (max-width: 640px) { .name-row > label.name-field { max-width: 10em; } }
+
+/* 달력 선택과 년월일시분 입력은 가운데 정렬, 숫자도 칸 안에서 가운데 */
+#form > .row:not(.name-row), #sinsooForm > .row { justify-content: center; }
+.dt { justify-content: center; }
+.dt input[type="number"] { text-align: center; }
+
+/* 헤더: 제목은 왼쪽, 인쇄/이미지 버튼은 오른쪽 끝 */
+.top .spacer { flex: 1; }
