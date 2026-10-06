@@ -277,3 +277,7 @@ button.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px
 .name-actions { display: flex; gap: 4px; margin-left: auto; align-items: center; }
 .name-actions button { padding: 7px 11px; white-space: nowrap; }
 @media (max-width: 520px) { .name-row input#name { width: 7em; } .name-actions { margin-left: 0; } }
+
+/* 화면에는 안 보이지만 보조 기기(화면 읽기)용으로 남겨 두는 글 */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.name-row fieldset.seg, .row > fieldset.seg:has(> .sr-only) { padding-top: 6px; }
