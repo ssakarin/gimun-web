@@ -182,11 +182,15 @@ function run(): boolean {
 
 // ---------------------------------------------------------------- 탭 (기문둔갑 / 신수운)
 type Tab = "qimen" | "sinsoo" | "yunyun" | "hongguk";
-const TAB_IDS: Record<Tab, string> = { qimen: "tabQimen", sinsoo: "tabSinsoo", yunyun: "tabYunyun", hongguk: "tabHongguk" };
+const TAB_IDS: Record<Tab, string> = { qimen: "tabQimen", yunyun: "tabYunyun", hongguk: "tabHongguk", sinsoo: "tabSinsoo" };
 let activeTab: Tab = "qimen";
 function setTab(t: Tab): void {
   activeTab = t;
-  (Object.keys(TAB_IDS) as Tab[]).forEach((k) => $(TAB_IDS[k]).classList.toggle("on", k === t));
+  (Object.keys(TAB_IDS) as Tab[]).forEach((k) => {
+    const b = $(TAB_IDS[k]);
+    b.classList.toggle("on", k === t);
+    b.setAttribute("aria-selected", String(k === t));
+  });
   const isBian = t === "sinsoo";
   $("basicHost").hidden = isBian;
   $("sinsooHost").hidden = !isBian;

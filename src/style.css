@@ -131,10 +131,6 @@ button.danger { color: #c0392b; border-color: #c0392b; }
 /* 탭 / 신수운 */
 .toolbar { align-items: center; }
 .toolbar .spacer { flex: 1; }
-.tabs { display: flex; gap: 0; }
-button.tab { background: transparent; color: var(--accent); border-radius: 8px 0 0 8px; }
-button.tab + button.tab { border-radius: 0 8px 8px 0; border-left: none; }
-button.tab.on { background: var(--accent); color: #fff; }
 .extra { color: #c0392b; font-weight: bold; margin-top: 2px; }
 .cell.hyear { outline: 2px solid #c0392b; outline-offset: -2px; }
 
@@ -258,3 +254,18 @@ button.chip.warn { color: #c0392b; border-color: #c0392b; }
 .dt label:first-child input { width: 3.8em; }
 .dt input:disabled { background: transparent; color: var(--muted); border-style: dashed; opacity: .75; cursor: not-allowed; }
 @media (max-width: 520px) { .dt { flex-wrap: wrap; } .name-row { flex-wrap: wrap; } }
+
+/* 탭: 둥근 막대 안에서 선택된 칸이 색으로 채워지는 모양 */
+.toolbar { margin: 4px 0 10px; }
+.tabs { display: inline-flex; gap: 2px; padding: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 1px 2px rgba(0, 0, 0, .06); }
+button.tab { background: transparent; color: var(--muted); border: none; border-radius: 9px; padding: 8px 20px; font-size: 1rem; font-weight: 600; letter-spacing: .02em;
+  transition: background .15s ease, color .15s ease, box-shadow .15s ease; }
+button.tab:hover { color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+button.tab.on { background: var(--accent); color: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); }
+button.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.toolbar > button.ghost { border-radius: 10px; padding: 8px 16px; }
+@media (max-width: 640px) {
+  .tabs { width: 100%; }
+  button.tab { flex: 1 1 0; padding: 8px 4px; font-size: .9rem; }
+  .toolbar { flex-wrap: wrap; }
+}
