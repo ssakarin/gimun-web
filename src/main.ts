@@ -3,7 +3,7 @@ import { toPng } from "html-to-image";
 import {
   calculate, calculateLunar, findBirthDates, mk, year, month, day, hour, minute, toGan, toZi, SajuResult,
 } from "./engine/index";
-import { dateLabel, realTimeLabel } from "./ui/format";
+import { dateLabel } from "./ui/format";
 import { ResultView } from "./ui/resultView";
 import {
   Person, loadPeople, savePeople, addPerson, makeDate, parseDate, parseCsv, toCsv, personKey,
@@ -165,7 +165,7 @@ function run(): boolean {
     const name = input("name").value.trim() || "이름없음";
     basicView.update(r, {
       title: `${name}  ·  ` + dateLabel(r, solarInput, h, mi),
-      sub: "보정 시각 " + realTimeLabel(r),
+      sub: "",
       birth: r.birthJeolgi,
     });
     person = { birthSolar: r.solarDt, gender: gender as 0 | 1, name };
@@ -237,8 +237,7 @@ function runSinsoo(): void {
     const r = s.result;
     sinsooView.update(r, {
       title: `${person.name}  ·  ${y}년 변국 (${{ year: "年局", month: "月局", day: "日局", time: "時局" }[mode]})`,
-      sub: dateLabel(r, cal === "solar", cal === "solar" ? h : hour(person.birthSolar), cal === "solar" ? mi : minute(person.birthSolar))
-        + "   ·   보정 시각 " + realTimeLabel(r),
+      sub: dateLabel(r, cal === "solar", cal === "solar" ? h : hour(person.birthSolar), cal === "solar" ? mi : minute(person.birthSolar)),
       birth: r.birthJeolgi,
       extra: `행년 ${s.hyear}궁 (${s.age}세)`,
     }, { hyear: s.hyear, monthMode: s.monthMode });

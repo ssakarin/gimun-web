@@ -149,7 +149,9 @@ export class ResultView {
     this.root.classList.remove("empty");
     this.titleEl.textContent = info.title;
     this.subEl.textContent = info.sub;
-    this.birthEl.textContent = info.birth;
+    this.subEl.hidden = !info.sub;
+    // 절기 줄과 상원/국 줄 사이의 빈 줄을 없애 세 줄이 붙어서 나오게 한다
+    this.birthEl.textContent = info.birth.split(/\r?\n/).filter((l) => l.trim() !== "").join("\n");
     this.extraEl.textContent = info.extra ?? "";
     this.extraEl.hidden = !info.extra;
     this.renderPillars(r);

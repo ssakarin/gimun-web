@@ -293,3 +293,8 @@ fieldset.seg label:has(input:focus-visible) { outline: 2px solid var(--accent); 
 fieldset.seg input[type="radio"] { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
 .name-row input#name { width: 6.4em; }
 @media (max-width: 520px) { .name-row input#name { width: 7em; } }
+
+/* 날짜 정보 칸: 줄 사이를 띄우지 않고 붙인다 */
+.info { gap: 0; line-height: 1.55; }
+.info .birth { margin-top: 0; }
+.info .extra { margin-top: 0; }
