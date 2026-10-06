@@ -298,3 +298,61 @@ fieldset.seg input[type="radio"] { position: absolute; inset: 0; width: 100%; he
 .info { gap: 0; line-height: 1.55; }
 .info .birth { margin-top: 0; }
 .info .extra { margin-top: 0; }
+
+/* ======================================================================
+   화면 폭에 따른 배치 (왼쪽: 입력/사주/대운, 판: 9궁, 통기도)
+     ~899px     : 한 줄로 쌓임  왼쪽 -> 9궁 판 -> 통기도
+     900~1499px : 2열          [왼쪽 / 통기도] | [9궁 판]   (판은 스크롤해도 화면에 붙어 있음)
+     1500px~    : 3열          [왼쪽] | [9궁 판] | [통기도]
+   ====================================================================== */
+.rv { grid-template-areas: "left" "board" "tongi"; }
+.rv-left { grid-area: left; }
+.rv-right { grid-area: board; }
+.rv-tongi { grid-area: tongi; margin: 0; }
+.rv.empty .rv-tongi { display: none; }
+.board .cell, .board .cell.blank { min-height: 170px; }
+
+@media (min-width: 900px) {
+  #app { max-width: 1340px; }
+  .rv { --leftw: 340px; grid-template-columns: var(--leftw) minmax(0, 1fr); grid-template-areas: "left board" "tongi board"; grid-template-rows: auto 1fr; gap: 12px 14px; }
+  .rv-right { align-self: start; }
+  .rv-tongi { align-self: start; }
+  .name-row { flex-wrap: wrap; }
+  .name-actions { margin-left: auto; }
+}
+@media (min-width: 1000px) {
+  .rv { --leftw: 380px; }
+  .name-row { flex-wrap: nowrap; }
+  .name-row input#name { width: 5.2em; }
+  .name-actions button { padding: 7px 9px; }
+}
+@media (min-width: 1200px) {
+  .rv { --leftw: 410px; }
+  .name-row input#name { width: 6.4em; }
+  .name-actions button { padding: 7px 11px; }
+}
+@media (min-width: 1500px) {
+  #app { max-width: 1760px; }
+  .rv { --leftw: 410px; grid-template-columns: var(--leftw) minmax(0, 1fr) 430px; grid-template-areas: "left board tongi"; grid-template-rows: auto; }
+}
+/* 판을 스크롤해도 화면에 붙여 둔다 (화면 높이가 충분할 때만) */
+@media (min-width: 900px) and (min-height: 760px) {
+  .rv-right { position: sticky; top: 8px; }
+}
+
+/* 이미지 저장 / 인쇄는 화면 폭과 관계없이 원본 같은 2열로 */
+@media (min-width: 900px) {
+  .exporting .rv { grid-template-columns: 410px minmax(0, 1fr); grid-template-areas: "left board" "tongi board"; grid-template-rows: auto 1fr; }
+  .exporting .rv-right { position: static; }
+}
+@media print {
+  .rv { display: grid; grid-template-columns: 410px minmax(0, 1fr); grid-template-areas: "left board" "tongi board"; grid-template-rows: auto 1fr; }
+  .rv-right { position: static; }
+  .rv-tongi { margin: 0; }
+}
+
+/* 저장된 사람 패널 (목록 버튼으로 여닫음) */
+.people-head { margin-bottom: 8px; }
+.people-head h2 { margin: 0; }
+button.ghost.on { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.exporting #app { max-width: 1340px; }

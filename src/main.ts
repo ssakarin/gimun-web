@@ -326,6 +326,7 @@ function renderPeople(): void {
     .filter((p) => !filter || p.name.includes(filter) || p.note.includes(filter))
     .sort((a, b) => (a[sortKey] < b[sortKey] ? -1 : a[sortKey] > b[sortKey] ? 1 : 0) * (sortAsc ? 1 : -1));
   $("peopleCount").textContent = people.length ? `(${people.length}명)` : "";
+  $("peopleBtn").textContent = people.length ? `목록 (${people.length})` : "목록";
   const tb = document.querySelector("#peopleTable tbody") as HTMLElement;
   tb.replaceChildren();
   document.querySelectorAll("#peopleTable th[data-k]").forEach((th) => {
@@ -359,7 +360,14 @@ function renderPeople(): void {
   }
 }
 
+function setPeopleOpen(open: boolean): void {
+  $("peoplePanel").hidden = !open;
+  $("peopleBtn").setAttribute("aria-expanded", String(open));
+  $("peopleBtn").classList.toggle("on", open);
+}
+
 function loadPerson(p: Person): void {
+  setPeopleOpen(false);
   const d = parseDate(p.date);
   input("name").value = p.name;
   setRadio("gender", p.gender === "남자" ? "1" : "0");
@@ -444,6 +452,8 @@ $("form").addEventListener("submit", (e) => {
 $("print").addEventListener("click", () => window.print());
 $("savePng").addEventListener("click", () => void savePng());
 $("save").addEventListener("click", savePerson);
+$("peopleBtn").addEventListener("click", () => setPeopleOpen($("peoplePanel").hidden === true));
+$("peopleClose").addEventListener("click", () => setPeopleOpen(false));
 document.querySelectorAll('input[name="cal"]').forEach((r) => r.addEventListener("change", applyCalMode));
 input("filter").addEventListener("input", renderPeople);
 $("export").addEventListener("click", exportCsv);

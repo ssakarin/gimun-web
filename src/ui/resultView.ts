@@ -92,7 +92,7 @@ export class ResultView {
       this.partsHost.append(p);
     }
 
-    const tp = el("div", "panel tongi-panel");
+    const tp = el("div", "panel tongi-panel rv-tongi");
     const head = el("div", "row between");
     head.append(el("h2", "", "통기도"));
     const fs = el("fieldset", "seg no-export");
@@ -107,14 +107,13 @@ export class ResultView {
     }
     head.append(fs);
     tp.append(head, this.tongiEl);
-    this.partsHost.append(tp);
     this.left.append(this.partsHost);
 
     for (const e of opts.rightTop ?? []) this.right.append(e);
     this.buildBoard();
     this.drawEmptyBoard();
     this.right.append(this.boardEl);
-    this.root.append(this.left, this.right);
+    this.root.append(this.left, this.right, tp);   // 화면 폭에 따라 CSS 가 위치를 정한다 (왼쪽 아래 / 판 아래 / 오른쪽 열)
   }
 
   /** 12지가 둘러싼 판의 틀 (칸은 renderGrid 가 채운다) */
