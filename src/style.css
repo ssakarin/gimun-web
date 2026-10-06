@@ -377,3 +377,29 @@ button.p-main { display: flex; flex-direction: column; align-items: flex-start; 
 .head-actions { display: flex; gap: 8px; }
 .head-actions button.ghost { border-radius: 10px; padding: 7px 16px; }
 #result.toolbar { justify-content: flex-start; }
+
+/* ======================================================================
+   휴대폰: 이름 + 성별 + 조회/저장/목록 을 한 줄로, 년월일시분도 한 줄로
+   (이름 칸이 남는 폭을 쓰고, 버튼과 숫자 칸을 조금씩 줄인다)
+   ====================================================================== */
+@media (max-width: 640px) {
+  .name-row { flex-wrap: nowrap; gap: 5px; }
+  .name-row > label.name-field { flex: 1 1 0; min-width: 0; }
+  .name-row input#name { width: 100%; min-width: 0; padding: 6px 6px; }
+  .name-row fieldset.seg { flex: 0 0 auto; padding: 2px; }
+  .name-row fieldset.seg label { padding: 5px 9px; font-size: .9rem; }
+  .name-actions { margin-left: 0; gap: 3px; flex: 0 0 auto; }
+  .name-actions button { padding: 7px 8px; font-size: .88rem; }
+
+  .dt { flex-wrap: nowrap; gap: 4px 2px; font-size: .9rem; }
+  .dt input[type="number"] { width: 2.4em; padding: 6px 2px; }
+  .dt label:first-child input { width: 3.5em; }
+}
+@media (max-width: 360px) {
+  .name-row fieldset.seg label { padding: 5px 7px; }
+  .name-actions button { padding: 7px 6px; font-size: .82rem; }
+  .dt { font-size: .82rem; gap: 4px 1px; }
+  .dt input[type="number"] { width: 2.2em; }
+  .dt label:first-child input { width: 3.2em; }
+}
+@media (max-width: 640px) { .name-row > label.name-field { max-width: 10em; } }
