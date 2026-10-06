@@ -325,8 +325,6 @@ function renderPeople(): void {
   const rows = people
     .filter((p) => !filter || p.name.includes(filter) || p.note.includes(filter))
     .sort((a, b) => (a[sortKey] < b[sortKey] ? -1 : a[sortKey] > b[sortKey] ? 1 : 0) * (sortAsc ? 1 : -1));
-  $("peopleCount").textContent = people.length ? `(${people.length}명)` : "";
-  $("peopleBtn").textContent = people.length ? `목록 (${people.length})` : "목록";
   const tb = document.querySelector("#peopleTable tbody") as HTMLElement;
   tb.replaceChildren();
   document.querySelectorAll("#peopleTable th[data-k]").forEach((th) => {
