@@ -308,7 +308,7 @@ function applyCalMode(): void {
   const pillars = calValue() === "pillars";
   $("dtRow").hidden = pillars;
   $("pillarsInput").hidden = !pillars;
-  $("go").textContent = pillars ? "생일시 찾기" : "기문둔갑";
+  $("go").textContent = pillars ? "생일시 찾기" : "조회";
   $("save").hidden = pillars;
 }
 

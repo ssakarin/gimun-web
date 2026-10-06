@@ -28,6 +28,10 @@
             <label><input type="radio" name="gender" value="1" checked /> 남</label>
             <label><input type="radio" name="gender" value="0" /> 여</label>
           </fieldset>
+          <div class="name-actions">
+            <button type="submit" id="go">조회</button>
+            <button type="button" id="save" class="ghost">저장</button>
+          </div>
         </div>
         <div class="row">
           <fieldset class="seg">
@@ -52,10 +56,6 @@
           <div id="candidates" class="cands"></div>
         </div>
 
-        <div class="row actions">
-          <button type="submit" id="go">기문둔갑</button>
-          <button type="button" id="save" class="ghost">저장</button>
-        </div>
         <p id="error" class="error" role="alert" hidden></p>
         <p id="msg" class="ok" role="status" hidden></p>
       </form>
