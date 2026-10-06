@@ -142,18 +142,6 @@ button.danger { color: #c0392b; border-color: #c0392b; }
 .ln .red { color: #c0392b; font-weight: bold; }
 @media (max-width: 640px) { .ln.sz-s { font-size: .55rem; } .ln.sz-l { font-size: .9rem; } }
 
-/* 라이선스 */
-.top .spacer { flex: 1; }
-button.chip { background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: .8rem; }
-button.chip.warn { color: #c0392b; border-color: #c0392b; }
-.modal { position: fixed; inset: 0; background: rgba(0, 0, 0, .55); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
-.modal-box { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; width: min(520px, 100%); }
-.modal-box h2 { margin: 0 0 8px; color: var(--accent); font-size: 1.15rem; }
-.lic-text { margin: 0 0 12px; }
-.lic-label { display: block; font-size: .85rem; color: var(--muted); margin-bottom: 4px; }
-.modal-box textarea { width: 100%; font: .8rem/1.4 ui-monospace, Consolas, monospace; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); resize: vertical; }
-.lic-actions { margin-top: 10px; }
-@media print { .modal, .chip { display: none !important; } }
 
 /* ======================================================================
    원래 프로그램과 같은 배치: 왼쪽(입력, 사주, 대운, 통기도) + 오른쪽(12지가 둘러싼 9궁 판)
@@ -385,13 +373,7 @@ button.p-main { display: flex; flex-direction: column; align-items: flex-start; 
 .person input.note:focus { border-color: var(--accent); background: var(--panel); color: var(--ink); }
 .people-empty { text-align: center; margin: 14px 0; }
 
-/* 헤더 오른쪽: 인쇄 / 이미지 (예전 라이선스 표시 자리) */
+/* 헤더 오른쪽: 인쇄 / 이미지 */
 .head-actions { display: flex; gap: 8px; }
 .head-actions button.ghost { border-radius: 10px; padding: 7px 16px; }
-/* 맨 아래 작은 라이선스 링크 */
-.foot { margin: 28px 0 8px; text-align: center; }
-button.linkbtn { background: none; border: none; padding: 4px 8px; color: var(--muted); font-size: .8rem; text-decoration: underline; cursor: pointer; border-radius: 6px; }
-button.linkbtn:hover { color: var(--accent); }
-button.linkbtn.warn { color: #c0392b; }
-@media print { .foot { display: none !important; } }
 #result.toolbar { justify-content: flex-start; }
