@@ -404,9 +404,9 @@ button.p-main { display: flex; flex-direction: column; align-items: flex-start; 
 }
 @media (max-width: 640px) { .name-row > label.name-field { max-width: 10em; } }
 
-/* 달력 선택과 년월일시분 입력은 가운데 정렬, 숫자도 칸 안에서 가운데 */
-#form > .row:not(.name-row), #sinsooForm > .row { justify-content: center; }
-.dt { justify-content: center; }
+/* 달력 선택과 년월일시분 입력줄은 왼쪽 정렬, 입력칸 안의 숫자는 칸 가운데 */
+#form > .row:not(.name-row), #sinsooForm > .row { justify-content: flex-start; }
+.dt { justify-content: flex-start; }
 .dt input[type="number"] { text-align: center; }
 
 /* 헤더: 제목은 왼쪽, 인쇄/이미지 버튼은 오른쪽 끝 */
