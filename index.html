@@ -65,21 +65,21 @@
           <h2>저장된 사람</h2>
           <button type="button" id="peopleClose" class="ghost sm">닫기</button>
         </div>
-        <div class="row tools">
-          <input id="filter" type="text" placeholder="이름·비고 검색" />
-          <button type="button" id="export" class="ghost">내보내기 (CSV)</button>
-          <label class="filebtn ghost">가져오기 (CSV)<input id="import" type="file" accept=".csv,.txt" hidden /></label>
+        <div class="people-tools">
+          <input id="filter" type="search" placeholder="검색" aria-label="이름이나 비고로 검색" />
+          <fieldset class="seg sortseg">
+            <legend class="sr-only">정렬</legend>
+            <label><input type="radio" name="psort" value="name" checked /> 이름</label>
+            <label><input type="radio" name="psort" value="date" /> 생일</label>
+            <label><input type="radio" name="psort" value="recent" /> 최근</label>
+          </fieldset>
+          <div class="people-io">
+            <button type="button" id="export" class="ghost sm">내보내기</button>
+            <label class="filebtn ghost sm">가져오기<input id="import" type="file" accept=".csv,.txt" hidden /></label>
+          </div>
         </div>
-        <div class="tablewrap">
-          <table id="peopleTable">
-            <thead>
-              <tr>
-                <th data-k="name">이름</th><th data-k="gender">성별</th><th data-k="date">생년월일</th><th data-k="cal">양음력</th><th data-k="note">비고</th><th></th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
+        <ul id="peopleList" class="people-list"></ul>
+        <p id="peopleEmpty" class="muted people-empty" hidden>저장된 사람이 없습니다.</p>
         <p class="muted small">이 기기의 브라우저에만 저장됩니다. 다른 기기로 옮기거나 백업하려면 내보내기를 쓰세요. 기존 프로그램의 data.csv 도 가져올 수 있습니다.</p>
       </section>
 
@@ -122,7 +122,7 @@
         </div>
         <span class="spacer"></span>
         <button type="button" id="print" class="ghost">인쇄</button>
-        <button type="button" id="savePng" class="ghost">이미지로 저장</button>
+        <button type="button" id="savePng" class="ghost" title="이미지(PNG)로 저장" aria-label="이미지로 저장">이미지</button>
       </div>
 
       <div id="basicHost"></div>

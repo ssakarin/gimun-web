@@ -356,3 +356,31 @@ fieldset.seg input[type="radio"] { position: absolute; inset: 0; width: 100%; he
 .people-head h2 { margin: 0; }
 button.ghost.on { background: color-mix(in srgb, var(--accent) 14%, transparent); }
 .exporting #app { max-width: 1340px; }
+
+/* ======================================================================
+   저장된 사람 목록: 가로 스크롤 없는 카드형. 불러오기 / 삭제 버튼이 항상 오른쪽에 보인다
+   ====================================================================== */
+.people-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 2px 0 10px; }
+.people-tools input[type="search"] { flex: 1 1 100%; font: inherit; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); }
+.sortseg label { padding: 3px 10px; font-size: .85rem; }
+.people-io { display: flex; gap: 6px; margin-left: auto; }
+.filebtn.sm, button.sm { padding: 4px 10px; font-size: .82rem; border-radius: 8px; }
+.filebtn.sm { margin: 0; line-height: 1.4; }
+
+.people-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 340px; overflow-y: auto; overflow-x: hidden; }
+.person { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; padding: 8px 10px;
+  background: var(--bg); border: 1px solid var(--line); border-radius: 10px; transition: border-color .15s ease; }
+.person:hover, .person:focus-within { border-color: var(--accent); }
+button.p-main { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; min-width: 0; padding: 0; margin: 0; border: none; border-radius: 6px;
+  background: transparent; color: var(--ink); text-align: left; cursor: pointer; }
+.p-name { display: flex; align-items: center; gap: 6px; max-width: 100%; font-weight: 700; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.p-gender { flex: none; padding: 0 7px; border-radius: 999px; font-size: .7rem; font-weight: 600; color: #fff; line-height: 1.5; }
+.p-gender.m { background: #4a7fb5; }
+.p-gender.f { background: #c0577e; }
+.p-meta { font-size: .82rem; color: var(--muted); white-space: nowrap; }
+.p-actions { display: flex; gap: 6px; }
+.person input.note { grid-column: 1 / -1; width: 100%; min-width: 0; padding: 3px 6px; font-size: .85rem; border: 1px solid transparent; background: transparent; color: var(--muted); }
+.person input.note::placeholder { color: color-mix(in srgb, var(--muted) 55%, transparent); }
+.person input.note:hover { border-color: var(--line); }
+.person input.note:focus { border-color: var(--accent); background: var(--panel); color: var(--ink); }
+.people-empty { text-align: center; margin: 14px 0; }

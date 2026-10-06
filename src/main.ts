@@ -313,8 +313,8 @@ function applyCalMode(): void {
 
 // ---------------------------------------------------------------- 저장된 사람
 let people: Person[] = loadPeople(storage);
-let sortKey: keyof Person = "name";
-let sortAsc = true;
+type PeopleSort = "name" | "date" | "recent";
+let peopleSort: PeopleSort = "name";
 
 function persist(): void {
   if (!savePeople(storage, people)) showError("이 브라우저에서는 저장할 수 없습니다 (시크릿 모드이거나 저장소가 막혀 있음)");
@@ -322,39 +322,54 @@ function persist(): void {
 
 function renderPeople(): void {
   const filter = input("filter").value.trim();
-  const rows = people
-    .filter((p) => !filter || p.name.includes(filter) || p.note.includes(filter))
-    .sort((a, b) => (a[sortKey] < b[sortKey] ? -1 : a[sortKey] > b[sortKey] ? 1 : 0) * (sortAsc ? 1 : -1));
-  const tb = document.querySelector("#peopleTable tbody") as HTMLElement;
-  tb.replaceChildren();
-  document.querySelectorAll("#peopleTable th[data-k]").forEach((th) => {
-    const k = (th as HTMLElement).dataset.k!;
-    th.textContent = th.textContent!.replace(/ [▲▼]$/, "") + (k === sortKey ? (sortAsc ? " ▲" : " ▼") : "");
-  });
+  const indexed = people.map((p, i) => ({ p, i }));
+  const rows = indexed
+    .filter(({ p }) => !filter || p.name.includes(filter) || p.note.includes(filter))
+    .sort((a, b) => {
+      if (peopleSort === "recent") return b.i - a.i;                          // 나중에 저장한 사람이 위
+      const x = peopleSort === "name" ? a.p.name : a.p.date;
+      const y = peopleSort === "name" ? b.p.name : b.p.date;
+      return x < y ? -1 : x > y ? 1 : 0;
+    })
+    .map(({ p }) => p);
+
+  const list = $("peopleList");
+  list.replaceChildren();
+  $("peopleEmpty").hidden = rows.length > 0;
+  $("peopleEmpty").textContent = people.length === 0 ? "저장된 사람이 없습니다." : "검색 결과가 없습니다.";
+
   for (const p of rows) {
-    const tr = document.createElement("tr");
     const dd = parseDate(p.date);
-    tr.append(el("td", "", p.name), el("td", "", p.gender === "남자" ? "남" : "여"),
-      el("td", "", `${dd.y}-${p2(dd.m)}-${p2(dd.d)} ${p2(dd.h)}:${p2(dd.mi)}`), el("td", "", p.cal));
-    const noteTd = document.createElement("td");
-    const note = document.createElement("input");
-    note.type = "text"; note.value = p.note; note.className = "note"; note.setAttribute("aria-label", "비고");
-    note.addEventListener("change", () => { p.note = note.value.replace(/,/g, ".").replace(/\r?\n/g, "/"); persist(); });
-    noteTd.append(note);
-    const act = document.createElement("td");
+    const li = el("li", "person");
+
+    const main = el("button", "p-main");
+    (main as HTMLButtonElement).type = "button";
+    main.title = "눌러서 불러오기";
+    const nm = el("span", "p-name", p.name);
+    nm.append(el("span", "p-gender " + (p.gender === "남자" ? "m" : "f"), p.gender === "남자" ? "남" : "여"));
+    main.append(nm, el("span", "p-meta", `${dd.y}-${p2(dd.m)}-${p2(dd.d)} ${p2(dd.h)}:${p2(dd.mi)} · ${p.cal}`));
+    main.addEventListener("click", () => loadPerson(p));
+
+    const act = el("div", "p-actions");
     const load = el("button", "ghost sm", "불러오기") as HTMLButtonElement;
     load.type = "button";
     load.addEventListener("click", () => loadPerson(p));
-    const del = el("button", "ghost sm danger", "삭제") as HTMLButtonElement;
+    const del = el("button", "ghost sm danger icon", "삭제") as HTMLButtonElement;
     del.type = "button";
+    del.setAttribute("aria-label", `${p.name} 삭제`);
     del.addEventListener("click", () => {
       if (!window.confirm(`'${p.name}' 을(를) 삭제할까요?`)) return;
       people = people.filter((q) => personKey(q) !== personKey(p));
       persist(); renderPeople();
     });
     act.append(load, del);
-    tr.append(noteTd, act);
-    tb.append(tr);
+
+    const note = document.createElement("input");
+    note.type = "text"; note.value = p.note; note.className = "note"; note.placeholder = "비고"; note.setAttribute("aria-label", "비고");
+    note.addEventListener("change", () => { p.note = note.value.replace(/,/g, ".").replace(/\r?\n/g, "/"); persist(); });
+
+    li.append(main, act, note);
+    list.append(li);
   }
 }
 
@@ -459,12 +474,8 @@ input("import").addEventListener("change", (e) => {
   const f = (e.target as HTMLInputElement).files?.[0];
   if (f) void importCsv(f).finally(() => ((e.target as HTMLInputElement).value = ""));
 });
-document.querySelectorAll("#peopleTable th[data-k]").forEach((th) =>
-  th.addEventListener("click", () => {
-    const k = (th as HTMLElement).dataset.k as keyof Person;
-    if (k === sortKey) sortAsc = !sortAsc; else { sortKey = k; sortAsc = true; }
-    renderPeople();
-  }));
+document.querySelectorAll('input[name="psort"]').forEach((r) =>
+  r.addEventListener("change", () => { peopleSort = (r as HTMLInputElement).value as PeopleSort; renderPeople(); }));
 
 $("licenseBtn").addEventListener("click", openLicense);
 $("licClose").addEventListener("click", closeLicense);
