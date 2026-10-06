@@ -96,7 +96,7 @@ export class ResultView {
     const head = el("div", "row between");
     head.append(el("h2", "", "통기도"));
     const fs = el("fieldset", "seg no-export");
-    fs.append(el("legend", "", "그림"));
+    fs.append(el("legend", "sr-only", "그림"));
     for (const [v, label] of [["1", "단1"], ["2", "단2"]]) {
       const lb = document.createElement("label");
       const rd = document.createElement("input");
